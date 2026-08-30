@@ -1,9 +1,19 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class ChatMessage(BaseModel):
   role: str = Field(pattern="^(user|assistant|system)$")
   content: str = Field(min_length=1, max_length=12000)
+
+  @field_validator("content")
+  @classmethod
+  def validate_content(cls, value: str) -> str:
+    content = value.strip()
+
+    if not content:
+      raise ValueError("Zpráva nesmí obsahovat pouze mezery.")
+
+    return content
 
 
 class ChatRequest(BaseModel):
