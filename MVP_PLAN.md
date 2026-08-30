@@ -1,123 +1,193 @@
-# MVP Plan
+# RabbitHollow MVP
 
-Tento plán vychází přímo z aktuálního RabbitHollow frontend prototypu `rabbithollow-v3_4.html`. Cílem není vytvořit nový produkt, ale převést existující UI a jeho workflow na skutečně fungující aplikaci.
+### Deception Intelligence Platform
 
-## Cíl MVP
+> Plán převodu současného RabbitHollow prototypu na skutečnou aplikaci bez změny jeho UI konceptu.
 
-MVP musí zachovat současný vzhled, navigaci a hlavní workflow aplikace. Mock data a mock actions budou postupně nahrazeny skutečným backendem, databází a API.
+[![Source](https://img.shields.io/badge/source-rabbithollow--v3__4.html-7C3AED?style=flat-square)](./README.md)
+[![Target](https://img.shields.io/badge/target-MVP-7C3AED?style=flat-square)](./README.md)
 
-První verze musí umožnit:
+## 🎯 MVP cíl
 
-- přihlášení a RBAC
-- dashboard s reálnými security events
-- správu honeypotů a honeynet konfigurace
-- ukládání a vyhledávání IOC
-- sledování IP activity
-- threat hunting nad uloženými eventy
-- attacker profiles
-- security tickets a investigation notes
-- audit logging
-- security gates před deploymentem
-- AI asistenci pouze jako controlled workflow s human review
-- základní threat reporting
+MVP převede současný frontendový prototype na funkční platformu. Stávající views, navigace, workflow a vizuální koncept zůstávají zachované **1:1**.
 
-## Fáze 1 — Základ aplikace
+Mock data a mock actions budou postupně nahrazeny skutečným API, persistentními daty, authentication, RBAC, audit loggingem a controlled security workflows.
 
-- převést frontend do React + TypeScript + Vite
-- zachovat současné UI 1:1
-- rozdělit jednotlivé views na samostatné components
-- zavést společný type systém
-- odstranit inline mock logiku tam, kde bude nahrazena API vrstvou
-- připravit routing a application state
-- připravit error handling
-- přidat základní test setup
+## 🧭 Roadmap
 
-Výsledek: frontend běží jako čistá aplikace bez změny vizuálního konceptu původního HTML.
+```mermaid
+flowchart LR
+  A[Prototype] --> B[React + TypeScript]
+  B --> C[FastAPI + PostgreSQL]
+  C --> D[Authentication + RBAC]
+  D --> E[Deception Management]
+  E --> F[Detection + Intelligence]
+  F --> G[Ticketing + Audit]
+  G --> H[AI Workflows]
+  H --> I[Reports + Settings]
+```
 
-## Fáze 2 — Backend a databáze
+## 01 — Frontend foundation
 
-- vytvořit FastAPI backend
-- přidat PostgreSQL přes Prisma
-- připravit migrations a seed data
-- vytvořit modely pro users, roles, assets, honeypots, honeynet nodes, events, IOCs, attacker profiles, tickets a audit events
-- vytvořit REST API
-- zavést validaci requestů a response schemas
-- přidat základní logging a error handling
+**Cíl:** Převést současný single-page frontend do čisté React + TypeScript aplikace bez vizuální změny.
 
-Výsledek: frontend už není závislý na lokálních mock datech.
+- React + TypeScript + Vite
+- zachování současného UI 1:1
+- jednotlivé views jako samostatné components
+- společné TypeScript types
+- routing a application state
+- oddělení UI, state a API logiky
+- error handling
+- lazy loading views
+- základní unit test setup
+- responsive behavior pro mobil i 1920×1080
 
-## Fáze 3 — Authentication a RBAC
+**Výsledek:** React aplikace vizuálně odpovídající původnímu HTML.
 
-- login flow
+## 02 — Backend foundation
+
+**Cíl:** Odstranit závislost na lokální mock logice.
+
+- FastAPI
+- PostgreSQL
+- Prisma ORM
+- migrations
+- seed data
+- REST API
+- request validation
+- response schemas
+- structured error handling
+- základní application logging
+
+Základní doménové modely:
+
+`User` · `Role` · `Asset` · `Honeypot` · `HoneynetNode` · `Event` · `IOC` · `AttackerProfile` · `Ticket` · `AuditEvent`
+
+## 03 — Authentication & RBAC
+
+**Cíl:** Zabezpečit platformu podle role uživatele.
+
+- login
 - session/token management
 - role-based permissions
-- ochrana API endpointů
-- permission checks také ve frontendu
-- auditování citlivých akcí
+- API authorization
+- frontend permission checks
+- audit citlivých akcí
 
-Role a oprávnění musí odpovídat bezpečnostnímu modelu původního UI.
+Bezpečnostní rozhodnutí musí být vždy provedeno také na backendu. Frontend nesmí být security boundary.
 
-## Fáze 4 — Deception Management
+## 04 — Dashboard
 
-### Honeypot Builder
+Dashboard z prototypu bude napojen na skutečná data:
 
-Z původního builderu převést:
+- honeypot status
+- intrusion count
+- attacker IPs
+- IOC count
+- risk index
+- MITRE ATT&CK coverage
+- live event feed
+- threat ticker
+- global attack origins
+
+Vizualizace zůstávají součástí UI: risk gauge, stat cards, event feed a threat map.
+
+## 05 — Honeypot Builder
+
+Konfigurační workflow vychází přímo z původního builderu.
+
+Podporované service types z prototypu:
+
+`SSH` · `FTP` · `MySQL` · `HTTP` · `RDP` · `SMB` · `SMTP` · `Modbus` · `Kubernetes`
+
+Konfigurace:
 
 - node name
-- IP a port
+- IP
+- port
 - service type
 - banner
-- konfiguraci node
-- deployment workflow
-- security validation
+- generated configuration preview
+- validation status
+- deployment status
 
-High-risk typy jako RDP, SMB, Industrial a Kubernetes musí před deploymentem vyžadovat dual-control approval.
+High-risk typy jako RDP, SMB, Industrial a Kubernetes vyžadují dual-control approval.
 
-### Honeynet Designer
+V MVP bude deployment oddělený od samotného UI workflow. Nejprve vznikne bezpečná backendová reprezentace konfigurace a server-side validation.
 
-- nodes
+## 06 — Honeynet Designer
+
+- topology nodes
 - network segments
 - VLAN/subnet informace
+- segment roles
 - isolation status
-- topology data
-- základní validation pravidla
+- topology validation
+- bezpečné uložení konfigurace
 
-V MVP bude skutečný deployment oddělený od UI. Nejprve musí existovat bezpečná backendová reprezentace konfigurace a validační workflow.
+Canvas a současná vizualizace honeynetu zůstávají zachované.
 
-## Fáze 5 — Detection a Intelligence
+## 07 — Breadcrumb Trails
 
-### Threat Hunting
+- lure creation
+- lure types
+- canarytokens
+- activation events
+- target tracking
+- event timeline
 
-- ukládání query
-- SPL/KQL/Sigma/SQL workflow
+Lure data musí používat synthetic credentials a nesmí obsahovat production secrets nebo reálné PII.
+
+## 08 — Threat Hunting
+
+Podpora workflow, které už existuje v prototypu:
+
+- SPL
+- KQL
+- Sigma
+- SQL
 - query validation
-- execution nad dostupnými daty
-- výsledky a historie huntů
-- základní detection rules
+- execution nad dostupnými eventy
+- query history
+- detection rules
+- MITRE ATT&CK mapping
 
-### IOC Intelligence
+MVP nebude předstírat integrace, které nejsou skutečně implementované. Externí SIEM konektory přijdou až po stabilizaci interního event modelu.
 
-- IP
+## 09 — IOC Intelligence
+
+IOC model musí minimálně podporovat:
+
+- IP address
 - domain
 - hash
 - URL
 - IOC type
-- severity/risk
+- severity
+- risk
 - source
 - timestamps
-- search a filtering
+- related events
+- search
+- filtering
 
-### IP Activity Tracker
+IOC bude možné propojit s IP activity, attacker profiles a tickets.
+
+## 10 — IP Activity Tracker
 
 - IP detail
 - event timeline
 - honeypot correlation
-- filtrování podle času
-- vazba na IOC a attacker profile
+- time filtering
+- IOC correlation
+- attacker profile correlation
+- activity statistics
 
-## Fáze 6 — Attacker Profiles
+IP adresa sama o sobě nebude považována za dostatečný identifikátor útočníka.
 
-Z existujícího behavioral fingerprint workflow vytvořit persistentní profily:
+## 11 — Attacker Profiles
+
+Z behavioral fingerprint workflow vznikne persistentní profil:
 
 - attacker identifier
 - IP history
@@ -128,9 +198,9 @@ Z existujícího behavioral fingerprint workflow vytvořit persistentní profily
 - risk score
 - timeline
 
-Profil nesmí být založen pouze na IP adrese. IP je pouze jeden z korelačních atributů.
+Korelace bude založená na více atributech, nikoliv pouze na IP.
 
-## Fáze 7 — Ticketing a Investigation
+## 12 — Security Tickets
 
 - create ticket
 - ticket detail
@@ -138,15 +208,17 @@ Profil nesmí být založen pouze na IP adrese. IP je pouze jeden z korelačníc
 - status
 - assigned analyst
 - investigation notes
-- related IP/IOC/asset
-- audit trail
+- related IP
+- related IOC
+- related asset
 - status transitions
+- audit trail
 
-AI může ticket pouze připravit nebo doporučit další postup. Automatické containment akce nejsou součástí prvního MVP.
+AI může ticket připravit nebo doporučit další postup. Automatické containment akce nejsou součástí prvního MVP.
 
-## Fáze 8 — Security & Guardrails
+## 13 — Security & Guardrails
 
-Převést bezpečnostní koncept z prototypu do skutečných backendových kontrol:
+Bezpečnostní koncept z prototypu bude převeden do server-side kontrol:
 
 - RBAC
 - deployment validation
@@ -157,27 +229,29 @@ Převést bezpečnostní koncept z prototypu do skutečných backendových kontr
 - dual control
 - audit integrity
 
-Bezpečnostní gate musí být proveden server-side. Frontend nesmí být jedinou bezpečnostní kontrolou.
+High-risk deployment nesmí být možné obejít změnou frontendového requestu.
 
-## Fáze 9 — Audit Log
+## 14 — Audit Log
 
-Každá důležitá změna musí vytvořit audit event.
+Důležité akce vytvářejí append-only audit event.
 
-Audit event bude obsahovat minimálně:
+Event obsahuje minimálně:
 
-- timestamp
-- actor
-- action
-- resource
-- result
-- metadata
-- correlation ID
+| Field | Purpose |
+| --- | --- |
+| `timestamp` | Čas události |
+| `actor` | Uživatel nebo service |
+| `action` | Provedená operace |
+| `resource` | Dotčený objekt |
+| `result` | Výsledek operace |
+| `metadata` | Kontext události |
+| `correlationId` | Propojení souvisejících akcí |
 
-Audit log musí být append-only z pohledu běžného uživatele.
+Běžný uživatel nesmí audit eventy upravovat ani mazat.
 
-## Fáze 10 — AI Cyber Agent
+## 15 — AI Cyber Agent
 
-AI vrstva naváže na workflow, které už existuje v prototypu:
+AI vrstva naváže na workflow z prototypu:
 
 - incident triage
 - IOC correlation
@@ -185,23 +259,30 @@ AI vrstva naváže na workflow, které už existuje v prototypu:
 - report assistance
 - containment advice
 
-AI nebude mít v MVP přímý shell, firewall ani production deployment access.
+### Bezpečnostní hranice
 
-AI výstupy musí být označené jako doporučení a citlivé akce musí vyžadovat human approval.
+AI v MVP:
 
-## Fáze 11 — Reports
+- pracuje pouze s daty, ke kterým má autorizovaný přístup
+- nemá přímý shell access
+- nemá přímý firewall access
+- nemá production deployment access
+- generuje doporučení místo automatického provedení citlivých akcí
+- vyžaduje human review pro security-sensitive actions
+
+## 16 — Reports
 
 - 24h threat summary
 - incident summary
 - IOC summary
 - attacker activity
-- basic export
+- základní export
 
-Reporting bude nejprve generovat data z interní databáze. Exportní formáty a externí integrace lze rozšířit později.
+Reporty budou generované nad interními persistentními daty.
 
-## Fáze 12 — Settings
+## 17 — Settings
 
-Zprovoznit pouze nastavení potřebná pro MVP:
+Do MVP patří pouze nastavení potřebná pro provoz platformy:
 
 - alert configuration
 - threat intelligence sources
@@ -210,28 +291,36 @@ Zprovoznit pouze nastavení potřebná pro MVP:
 
 Secrets nebudou ukládány do frontendu ani Git repozitáře.
 
-## Co není v prvním MVP
+## 🚫 Mimo první MVP
 
-Do prvního MVP nepatří plnohodnotný production deployment deception infrastruktury, automatické firewall containment akce, přímý AI shell access, rozsáhlé SIEM integrace, multi-cloud orchestrace ani komplexní billing/licensing systém.
+Tyto části mohou být připravené architektonicky, ale nebudou blokovat první funkční verzi:
 
-Tyto části mohou být připraveny architektonicky, ale jejich implementace přijde až po stabilizaci základního produktu.
+- plnohodnotný production deployment deception infrastruktury
+- automatické firewall containment actions
+- přímý AI shell access
+- rozsáhlé SIEM integrations
+- multi-cloud orchestration
+- komplexní billing/licensing
+- pokročilé external threat-intelligence pipelines
 
-## Definition of Done
+## ✅ Definition of Done
 
 MVP je hotové, když:
 
-- aplikace běží jako React/TypeScript frontend a FastAPI backend
-- data jsou persistentně uložená v PostgreSQL
-- uživatelé mají funkční authentication a RBAC
+- React/TypeScript frontend nahrazuje původní frontend bez změny UI konceptu
+- aplikace funguje na mobilu i desktopu včetně 1920×1080
+- FastAPI poskytuje skutečné backend API
+- PostgreSQL drží persistentní data
+- authentication a RBAC fungují server-side
 - hlavní views z původního HTML jsou dostupné
-- mock data nejsou potřeba pro základní workflow
+- základní workflow nevyžadují mock data
 - honeypot configuration lze vytvořit a validovat
 - IOC a event data lze ukládat, vyhledávat a filtrovat
 - IP activity je korelovaná s eventy
+- attacker profiles lze vytvořit a zobrazit
 - tickets lze vytvořit a spravovat
 - důležité akce jsou auditované
 - security gates fungují server-side
 - AI workflow vyžaduje human review
-- původní vizuální koncept zůstává zachovaný
-- aplikace funguje na mobilu i desktopu včetně 1920×1080
-- existují unit a integrační testy pro kritickou logiku
+- kritická logika má unit a integration tests
+- projekt zůstává čistý a bez secrets/build artefaktů
