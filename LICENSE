@@ -1,0 +1,76 @@
+RabbitHollow Source-Available License 1.0
+
+Copyright © 2026 Patrik Djasník. All rights reserved.
+
+WORKING LICENSE DRAFT — This license is intended for legal review before being relied upon as the final project license.
+
+1. Grant of rights
+
+The copyright holder grants you a limited, non-exclusive, non-transferable, royalty-free license to access, reproduce, study, and use RabbitHollow for personal, educational, research, evaluation, and other non-commercial purposes, subject to the terms below.
+
+You may inspect the source code and create modifications and forks for non-commercial purposes. You may share such non-commercial modifications provided that you retain the copyright and license notices, clearly identify substantial modifications, and do not represent the modified work as an official release of RabbitHollow.
+
+2. Commercial use
+
+Commercial use requires prior written permission from the copyright holder and a separate commercial license.
+
+Without such permission and license, you may not:
+
+- sell RabbitHollow or a copy of it;
+- sell a product containing RabbitHollow or a substantial part of it;
+- provide RabbitHollow as a paid service;
+- operate RabbitHollow as a paid SaaS or hosted service;
+- provide commercial hosting of RabbitHollow;
+- include RabbitHollow or a substantial part of it in a commercial product or service;
+- use RabbitHollow to provide paid services to third parties;
+- sublicense RabbitHollow for commercial use;
+- distribute a commercial fork or commercial derivative work;
+- otherwise commercially exploit RabbitHollow or a substantial part of it.
+
+3. Commercial licensing
+
+The copyright holder may grant commercial licenses on individually agreed terms. A commercial license may cover, among other things, deployment, distribution, SaaS, on-premise use, proprietary modifications, sublicensing, support, territory, duration, fees, and revenue-sharing arrangements.
+
+No person has an automatic right to receive a commercial license.
+
+4. Copyright and trademarks
+
+This license does not transfer ownership of copyright or other intellectual property rights. Copyright notices, license notices, and attribution information must not be removed or intentionally obscured.
+
+This license does not grant rights to the RabbitHollow name, logos, trademarks, or other branding. Such marks may not be used to imply official endorsement or affiliation without permission.
+
+5. Third-party components
+
+This license applies only to material for which the copyright holder has the necessary rights and that is expressly covered by this license. Third-party libraries, frameworks, models, datasets, tools, and other components may be governed by their own licenses. Nothing in this license grants rights to third-party material beyond those licenses.
+
+6. License violations
+
+Use outside the rights expressly granted by this license constitutes unauthorized use. The copyright holder may seek any remedies available under applicable law, including cessation of unauthorized use, removal or cessation of unauthorized commercial distribution where legally available, information concerning the scope of the infringement, damages, unjust enrichment, and other applicable remedies.
+
+This public license does not by itself establish a fixed contractual penalty against every third party. Specific contractual penalties may be agreed separately in a commercial license or other enforceable agreement, subject to applicable law.
+
+7. Termination
+
+Rights granted under this license terminate automatically to the extent that a recipient materially breaches its terms. Termination does not affect rights or claims that arose before termination.
+
+8. No warranty
+
+RabbitHollow is provided on an “as is” basis to the maximum extent permitted by applicable law. Nothing in this license excludes liability or consumer rights that cannot lawfully be excluded or limited.
+
+9. Governing law
+
+This license is intended to be interpreted under the law of the Czech Republic, subject to mandatory provisions of applicable European Union law and any other mandatory law that cannot lawfully be excluded.
+
+For cross-border relationships, applicable rules of private international law and mandatory consumer protections remain unaffected.
+
+10. Severability
+
+If any provision is held invalid or unenforceable, the remaining provisions remain in effect to the extent permitted by law. The affected provision shall, where legally possible, be interpreted or replaced so as to best preserve its intended purpose.
+
+11. Reservation of rights
+
+All rights not expressly granted by this license are reserved by the copyright holder.
+
+For commercial licensing inquiries, contact the project copyright holder.
+
+Copyright © 2026 Patrik Djasník. All rights reserved.
