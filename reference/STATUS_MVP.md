@@ -105,12 +105,12 @@ Předchozí významný UI checkpoint:
 ## Pravidla pokračování
 
 1. Referenční HTML je zdroj pravdy pro UI.
-2. Nezjednodušovat UI jen kvůli rychlejšímu MVP.
+2. Nezjednodušovat UI jen kvůli rychlejšímu MVP. ( pro AI ) 
 3. Do produkční logiky nedávat smyšlené IP adresy, tokeny, credentials ani jiné konkrétní hodnoty. Pokud jsou potřeba, vyžádat si je od uživatele s vysvětlením, jak je získat a proč jsou potřeba.
 4. Kód držet čistý a technickou dokumentaci nepřehánět.
-5. Komentáře v kódu psát česky; běžné technické termíny, které se standardně používají anglicky, ponechat anglicky.
-6. Commit messages psát česky a podle kontextu používat vhodné emoji.
-7. Každou významnou změnu commitovat samostatně a uživateli předat odkaz na konkrétní commit.
+5. Komentáře v kódu psát česky; běžné technické termíny, které se standardně používají anglicky, ponechat anglicky. ( vzkaz pro AI xD ) 
+6. Commit messages psát česky a podle kontextu používat vhodné emoji. ( vzkaz pro AI )
+7. Každou významnou změnu commitovat samostatně a uživateli předat odkaz na konkrétní commit. ( vzkaz pro AI )
 8. Před další větší změnou preferovat test nebo ověření aktuálního stavu, pokud je dostupné.
 
 ## Stav při pauze
