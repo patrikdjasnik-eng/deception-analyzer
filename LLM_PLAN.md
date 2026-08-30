@@ -1,8 +1,8 @@
 # RabbitHollow LLM Agent
 
-### Qwen2.5-Coder 7B → 14B
+### Qwen2.5-Coder 7B → 14B → Autonomous Security Agent
 
-> Plán pro integraci lokálního LLM chatbotu a bezpečného AI agenta přímo do RabbitHollow.
+> Plán pro integraci lokálního LLM chatbotu a postupný vývoj bezpečného AI agenta přímo do RabbitHollow.
 
 ## 🎯 Cíl
 
@@ -10,7 +10,9 @@ RabbitHollow dostane vlastní AI vrstvu, která bude dostupná přímo v platfor
 
 První produkční integrační model bude **Qwen2.5-Coder 7B**. Model **Qwen2.5-Coder 14B už byl samostatně spuštěn a ověřen na localhostu**, takže jeho pozdější integrace nebude začínat od ověřování samotného LLM runtime.
 
-AI nebude pouze samostatný chatbot. Cílem je agent schopný bezpečně pracovat s RabbitHollow daty, nástroji a workflow.
+Dlouhodobým cílem není pouze chatbot. AI má postupně vyrůst v bezpečného **autonomous security agent**, který dokáže průběžně vyhodnocovat stav prostředí, pracovat s bezpečnostními nástroji v izolovaném sandboxu, reagovat na detekovaná rizika a připravovat pravidelné security reports.
+
+Autonomie bude přidávána postupně. Každá nová úroveň schopností musí mít vlastní permission model, sandbox boundaries, audit a možnost human override.
 
 ## 🧠 Model strategy
 
@@ -21,8 +23,10 @@ flowchart LR
   ROUTER --> Q7[Qwen2.5-Coder 7B]
   ROUTER --> Q14[Qwen2.5-Coder 14B]
   AGENT --> TOOLS[Controlled Tools]
+  TOOLS --> SANDBOX[Security Sandbox]
   TOOLS --> API[RabbitHollow API]
   API --> DB[(PostgreSQL)]
+  AGENT --> REPORTS[Reports + Notifications]
 ```
 
 ### Qwen2.5-Coder 7B
@@ -69,6 +73,8 @@ Agent Runtime
       ↓
 Context Builder
       ↓
+Policy Engine
+      ↓
 Model Router
       ↓
 Local LLM Runtime
@@ -86,8 +92,10 @@ AI API
 ├── agent runtime
 ├── tool registry
 ├── tool authorization
+├── policy engine
 ├── memory service
 ├── prompt management
+├── sandbox controller
 └── audit service
 ```
 
@@ -256,21 +264,285 @@ Každý tool bude mít permission level.
 
 Tohle oddělení je zásadní. Agent není root user.
 
+## 🧪 Budoucnost: Security Sandbox
+
+Dlouhodobě bude agent dostávat vlastní izolovaný **security sandbox**.
+
+Sandbox bude určený pro bezpečné používání obranných cybersecurity nástrojů, které budou provozované v samostatných kontejnerech.
+
+```text
+AI Agent
+   ↓
+Policy Engine
+   ↓
+Sandbox Controller
+   ↓
+Container Runtime
+   ├── defensive scanner
+   ├── log analysis tool
+   ├── IOC analysis tool
+   ├── network diagnostics
+   └── other approved security tools
+```
+
+Jednotlivé kontejnery musí být:
+
+- izolované od host systému
+- omezené network access
+- omezené filesystem access
+- omezené CPU/RAM
+- časově omezené
+- monitorované
+- auditované
+- spouštěné pouze přes allowlist
+
+Agent nebude dostávat možnost libovolně spouštět Docker commands nebo vytvářet vlastní privileged containers.
+
+Sandbox slouží k **defensive security analysis**, ne jako cesta k obcházení bezpečnostních hranic host systému.
+
+## 🖥️ Terminal access
+
+Pokud to bude možné bezpečně implementovat, agent získá v budoucí fázi **terminal access pouze uvnitř sandboxu**.
+
+Princip:
+
+```text
+Agent
+  ↓
+Command Policy
+  ↓
+Sandbox Terminal
+  ↓
+Ephemeral Container
+```
+
+Terminal nesmí být přímý shell hostitele.
+
+Každý command bude před spuštěním procházet policy kontrolou. Výstup bude vrácen agentovi jako nedůvěryhodná tool data a bude auditovaný.
+
+Preferovaný model je ephemeral session:
+
+```text
+create sandbox
+    ↓
+run approved command
+    ↓
+collect output
+    ↓
+store audit metadata
+    ↓
+destroy sandbox
+```
+
+Pokud nebude možné zajistit dostatečně silnou izolaci, terminal access nebude aktivován.
+
+## 🤖 Autonomní security monitoring
+
+Dlouhodobým cílem je, aby agent nemusel čekat pouze na otázku uživatele.
+
+Agent může pravidelně vyhodnocovat:
+
+- security events
+- IOC activity
+- attacker activity
+- honeypot activity
+- anomaly signals
+- asset status
+- detection results
+- open security tickets
+
+Z toho bude vytvářet bezpečnostní stav prostředí.
+
+```text
+Telemetry
+   ↓
+Detection
+   ↓
+Correlation
+   ↓
+Risk Assessment
+   ↓
+Agent Decision
+   ↓
+Policy Check
+   ↓
+Response / Escalation
+```
+
+Autonomní reakce musí mít několik úrovní.
+
+### Level 0 — Observe
+
+Agent pouze sleduje a vyhodnocuje.
+
+### Level 1 — Recommend
+
+Agent vytvoří doporučení a upozornění.
+
+### Level 2 — Prepare
+
+Agent připraví ticket, report, query nebo návrh bezpečnostního opatření.
+
+### Level 3 — Controlled response
+
+Agent může provést předem schválenou low-risk akci v sandboxu nebo jiném explicitně autorizovaném prostředí.
+
+### Level 4 — Autonomous response
+
+Pouze pro přesně definované a otestované scénáře s možností rollbacku, auditováním a emergency kill switchem.
+
+High-risk actions zůstávají za human approval.
+
+## 🚨 Risk evaluation
+
+Agent bude mít vlastní risk assessment pipeline.
+
+```text
+Events
+  ↓
+Normalization
+  ↓
+Correlation
+  ↓
+Severity
+  ↓
+Confidence
+  ↓
+Impact
+  ↓
+Risk Score
+  ↓
+Response Policy
+```
+
+Model nesmí být jediným zdrojem rozhodnutí. Kritická rozhodnutí musí být kombinací:
+
+- deterministic rules
+- trusted telemetry
+- authorization policy
+- model reasoning
+- confidence threshold
+
+LLM může doporučit akci, ale policy engine rozhodne, zda je akce vůbec povolená.
+
+## 📋 Automated reports
+
+Agent bude později vytvářet pravidelné security reports automaticky.
+
+Typy:
+
+- daily security summary
+- weekly security report
+- incident report
+- IOC report
+- honeypot activity report
+- attacker activity report
+- risk trend report
+- executive summary
+
+Workflow:
+
+```text
+Scheduled Job
+      ↓
+Collect Security Data
+      ↓
+Analyze
+      ↓
+Generate Report
+      ↓
+Validate
+      ↓
+Store Report
+      ↓
+Notify Users
+```
+
+Report musí obsahovat zdrojová data nebo odkazy na relevantní RabbitHollow entities, aby byl výsledek dohledatelný.
+
+## 🔔 Notifications
+
+Po vytvoření reportu může agent prostřednictvím notification service informovat uživatele.
+
+Možné kanály podle budoucí konfigurace:
+
+- in-app notification
+- email
+- další schválené notification providers
+
+Notification service nesmí být přímou schopností LLM. Agent pouze vytvoří strukturovaný notification request a backend ověří oprávnění a cílové uživatele.
+
+Uživatel si bude moci nastavit:
+
+- typ reportů
+- frekvenci
+- severity threshold
+- notification channel
+- čas doručení
+
+## 🔁 Autonomous agent loop
+
+Dlouhodobý cílový loop:
+
+```text
+Observe
+   ↓
+Understand
+   ↓
+Correlate
+   ↓
+Assess risk
+   ↓
+Choose action
+   ↓
+Policy check
+   ↓
+Execute / Recommend
+   ↓
+Verify result
+   ↓
+Audit
+   ↓
+Report
+   ↓
+Observe again
+```
+
+Agent musí být schopen ověřit výsledek vlastní akce. Nesmí považovat samotné úspěšné zavolání toolu za důkaz, že problém byl vyřešen.
+
+## 🛑 Emergency controls
+
+Autonomní režim musí mít bezpečnostní pojistky:
+
+- global AI kill switch
+- sandbox kill switch
+- per-tool disable
+- per-agent disable
+- maximum tool calls per run
+- maximum runtime
+- resource limits
+- network egress policy
+- approval gates
+- rollback where possible
+- complete audit trail
+
+Pokud policy engine nebo sandbox controller není dostupný, agent musí přejít do safe failure mode a pouze informovat uživatele.
+
 ## 🚫 Co agent nesmí dělat
 
-V první verzi:
+Bez explicitního rozšíření permission modelu:
 
-- spouštět shell commands
-- spouštět arbitrary SQL
-- měnit firewall rules
+- spouštět shell commands na hostiteli
+- získávat host root access
+- spouštět privileged containers
+- používat arbitrary SQL
+- měnit firewall rules přímo
 - provádět production deployment
 - mazat security data
 - měnit RBAC
 - číst secrets
 - získávat production credentials
-- provádět containment bez human approval
-
-AI může navrhnout akci a připravit draft. Kritická akce musí projít backendovým authorization a approval workflow.
+- provádět high-risk containment bez human approval
 
 ## 🛡️ Prompt security
 
@@ -282,6 +554,8 @@ system policy
 security policy
 ↓
 user context
+↓
+trusted application context
 ↓
 tool results
 ↓
@@ -357,6 +631,9 @@ Message
 AgentRun
 ToolCall
 ModelRun
+AgentSchedule
+SecurityReport
+Notification
 ```
 
 Důležité vazby:
@@ -397,6 +674,10 @@ Testy musí pokrývat:
 - conflicting data
 - timeout
 - model failure
+- sandbox escape attempts
+- command policy enforcement
+- resource exhaustion
+- autonomous response safety
 
 Stejný evaluation dataset se použije pro 7B i 14B, aby bylo možné porovnat kvalitu.
 
@@ -451,6 +732,7 @@ Přidat:
 - agent loop
 - audit
 - rate limiting
+- policy engine
 
 ### Fáze 5 — RabbitHollow context
 
@@ -488,6 +770,30 @@ Po stabilizaci 7B:
 6. Přidat model routing.
 7. Zachovat stejný frontend a API contract.
 
+### Fáze 8 — Sandbox
+
+Po stabilizaci read-only agenta:
+
+1. Přidat sandbox controller.
+2. Přidat containerized defensive tools.
+3. Zavést resource limits.
+4. Zavést network egress policy.
+5. Zavést command/tool allowlist.
+6. Přidat ephemeral sandbox sessions.
+7. Přidat sandbox escape testing.
+8. Teprve poté experimentovat s terminal access.
+
+### Fáze 9 — Autonomous monitoring
+
+1. Přidat scheduled observation jobs.
+2. Přidat risk assessment pipeline.
+3. Přidat deterministic response policies.
+4. Přidat automated report generation.
+5. Přidat notification service.
+6. Zavést autonomy levels.
+7. Povolit pouze nízkorizikové autonomní reakce.
+8. Přidat human approval pro vyšší riziko.
+
 ## 📊 Observability
 
 Každý agent run bude mít:
@@ -498,8 +804,10 @@ Každý agent run bude mít:
 - latency
 - token usage, pokud runtime poskytuje metadata
 - tool calls
+- sandbox session ID, pokud existuje
 - result status
 - error information
+- policy decisions
 
 Do logů se nesmí zapisovat secrets nebo celé citlivé contexty.
 
@@ -517,6 +825,15 @@ Pro lokální inference je potřeba měřit:
 - concurrent requests
 
 14B už má ověřenou základní local inference. Před jeho integrací do routingu se ale musí změřit výkon přímo v RabbitHollow workflow.
+
+Sandbox bude navíc měřit:
+
+- container startup time
+- command execution time
+- CPU/RAM usage
+- network traffic
+- failed policy checks
+- sandbox termination events
 
 ## 🧱 Definition of Done
 
@@ -536,6 +853,40 @@ LLM MVP je hotové, když:
 - existuje evaluation suite
 - již ověřený 14B lze přidat přes stejný model adapter/router
 
+## 🔭 Budoucí AI roadmap
+
+```text
+Qwen2.5-Coder 7B
+        ↓
+Integrated Chat
+        ↓
+Controlled Agent
+        ↓
+Qwen2.5-Coder 14B
+        ↓
+RAG + Security Knowledge
+        ↓
+Sandboxed Security Tools
+        ↓
+Sandbox Terminal
+        ↓
+Continuous Security Monitoring
+        ↓
+Autonomous Risk Assessment
+        ↓
+Controlled Autonomous Response
+        ↓
+Automated Security Reports
+        ↓
+User Notifications
+        ↓
+Adaptive Security Agent
+```
+
+Konečným cílem je vytvořit AI bezpečnostního analytika, který dokáže **nepřetržitě sledovat security stav RabbitHollow prostředí, rozumět souvislostem mezi událostmi, bezpečně používat dostupné obranné nástroje, vyhodnocovat rizika, navrhovat nebo provádět povolené reakce a pravidelně informovat uživatele o stavu prostředí**.
+
+Autonomie ale nesmí znamenat nekontrolovaný přístup. Každé rozšíření schopností musí být doprovázeno izolací, policy enforcementem, auditováním, resource limits, rollback mechanismem tam, kde je možný, a jasně definovanou hranicí mezi doporučením a skutečnou akcí.
+
 ## Pozdější rozšíření
 
 Po stabilizaci MVP lze přidat:
@@ -549,3 +900,8 @@ Po stabilizaci MVP lze přidat:
 - model performance dashboard
 - offline evaluation pipeline
 - další lokální model providers
+- sandbox orchestration
+- automated security reports
+- notification workflows
+- continuous security monitoring
+- controlled autonomous response
