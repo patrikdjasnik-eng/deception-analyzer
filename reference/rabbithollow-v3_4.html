@@ -1,0 +1,3662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RabbitHollow // Deception Intelligence Platform — Secure Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════ */
+:root {
+  --void:      #06050A;
+  --s0:        #0B0A12;
+  --s1:        #110F1C;
+  --s2:        #181628;
+  --s3:        #201E35;
+  --s4:        #2A2845;
+
+  --p:         #7C3AED;
+  --p-lo:      rgba(124,58,237,.08);
+  --p-mid:     rgba(124,58,237,.18);
+  --p-hi:      rgba(124,58,237,.40);
+  --p-glow:    0 0 20px rgba(124,58,237,.45);
+  --p-glow-sm: 0 0 8px  rgba(124,58,237,.35);
+
+  --em:        #10B981;
+  --em-lo:     rgba(16,185,129,.10);
+  --em-hi:     rgba(16,185,129,.35);
+  --da:        #EF4444;
+  --da-lo:     rgba(239,68,68,.10);
+  --da-hi:     rgba(239,68,68,.35);
+  --am:        #F59E0B;
+  --am-lo:     rgba(245,158,11,.10);
+  --am-hi:     rgba(245,158,11,.35);
+  --sk:        #38BDF8;
+  --sk-lo:     rgba(56,189,248,.10);
+
+  --t1: #EDEAF8;
+  --t2: #9D98C0;
+  --t3: #58527A;
+  --t4: #352F52;
+
+  --ui:   'Space Grotesk', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --r:    6px;
+  --r-lg: 10px;
+  --r-xl: 14px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; font-family:var(--ui); background:var(--void); color:var(--t1); font-size:13px; line-height:1.5; }
+
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--p-mid); border-radius:2px; }
+
+/* ═══════════════════════════════════════════════
+   SHELL
+═══════════════════════════════════════════════ */
+.shell {
+  height: 100vh;
+  max-height: 100vh;
+  display: grid;
+  grid-template-rows: 52px 1fr;
+  grid-template-columns: 64px 220px 1fr;
+  overflow: hidden;
+}
+
+/* Explicit grid placement for every shell child */
+.rail    { grid-column: 1; grid-row: 1 / -1; }
+.sidebar { grid-column: 2; grid-row: 1 / -1; }
+.topbar  { grid-column: 3; grid-row: 1; }
+.main    { grid-column: 3; grid-row: 2; }
+
+/* ═══════════════════════════════════════════════
+   ICON RAIL (leftmost 64px)
+═══════════════════════════════════════════════ */
+.rail {
+  background: var(--s0);
+  border-right: 1px solid rgba(124,58,237,.10);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 14px 0;
+  gap: 4px;
+  z-index: 50;
+  position: relative;
+  overflow: hidden;
+}
+/* Rabbit-hole depth illusion — the signature element */
+.rail::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px; height: 200px;
+  background: radial-gradient(ellipse at center,
+    rgba(124,58,237,.18) 0%,
+    rgba(124,58,237,.06) 35%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  animation: hole-breathe 4s ease-in-out infinite;
+}
+@keyframes hole-breathe {
+  0%,100% { transform: translate(-50%,-50%) scale(1); opacity:.7; }
+  50%      { transform: translate(-50%,-50%) scale(1.15); opacity:1; }
+}
+
+.rail-logo {
+  width: 36px; height: 36px;
+  background: var(--p-mid);
+  border: 1px solid var(--p-hi);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  box-shadow: var(--p-glow);
+  margin-bottom: 12px;
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.rail-logo::after {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, rgba(124,58,237,.5) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.rail-btn {
+  width: 40px; height: 40px;
+  border-radius: var(--r-lg);
+  background: none;
+  border: 1px solid transparent;
+  color: var(--t3);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all .18s cubic-bezier(.4,0,.2,1);
+  position: relative;
+  flex-shrink: 0;
+}
+.rail-btn svg { width:18px; height:18px; stroke-width:1.75; transition: color .18s; }
+.rail-btn:hover {
+  background: var(--p-lo);
+  border-color: var(--p-mid);
+  color: var(--t2);
+  box-shadow: var(--p-glow-sm);
+}
+.rail-btn.active {
+  background: var(--p-mid);
+  border-color: var(--p-hi);
+  color: var(--p);
+  box-shadow: var(--p-glow);
+}
+.rail-btn .dot {
+  position: absolute; top:6px; right:6px;
+  width:5px; height:5px; border-radius:50%;
+  background: var(--da);
+  box-shadow: 0 0 5px var(--da);
+  animation: blink 1.1s step-start infinite;
+}
+.rail-sep { width:28px; height:1px; background: rgba(124,58,237,.12); margin: 6px 0; flex-shrink:0; }
+
+.rail-avatar {
+  margin-top: auto;
+  width: 32px; height: 32px;
+  background: var(--p-mid);
+  border: 1px solid var(--p-hi);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: box-shadow .18s;
+}
+.rail-avatar:hover { box-shadow: var(--p-glow); }
+
+/* Tooltip on rail buttons */
+.rail-btn[data-tip]::before {
+  content: attr(data-tip);
+  position: absolute; left:calc(100% + 12px); top:50%;
+  transform: translateY(-50%);
+  background: var(--s3);
+  border: 1px solid var(--p-mid);
+  color: var(--t1);
+  font-family: var(--mono);
+  font-size: 10px; font-weight:500;
+  padding: 4px 8px;
+  border-radius: var(--r);
+  white-space: nowrap;
+  opacity: 0; pointer-events:none;
+  transition: opacity .15s;
+  z-index: 999;
+}
+.rail-btn[data-tip]:hover::before { opacity:1; }
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR (220px context panel)
+═══════════════════════════════════════════════ */
+.sidebar {
+  background: var(--s0);
+  border-right: 1px solid rgba(124,58,237,.10);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  z-index: 40;
+}
+.sidebar-head {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid rgba(124,58,237,.08);
+  flex-shrink: 0;
+}
+.sidebar-head-label {
+  font-family: var(--mono);
+  font-size: 9px; font-weight:700;
+  letter-spacing: 1.8px;
+  color: var(--t4);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sidebar-head-title { font-size: 13px; font-weight:600; color: var(--t1); }
+
+.nav-group { padding: 10px 0 0; flex-shrink:0; }
+.nav-group-label {
+  font-family: var(--mono);
+  font-size: 9px; font-weight:700;
+  letter-spacing: 1.4px;
+  color: var(--t4);
+  text-transform: uppercase;
+  padding: 0 16px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 16px;
+  cursor: pointer;
+  color: var(--t3);
+  font-size: 12px; font-weight:500;
+  border-left: 2px solid transparent;
+  transition: all .14s;
+  position: relative;
+  user-select: none;
+}
+.nav-item svg { width:14px; height:14px; stroke-width:1.75; flex-shrink:0; transition: color .14s; }
+.nav-item:hover { color: var(--t2); background: var(--p-lo); }
+.nav-item.active { color: var(--t1); background: var(--p-lo); border-left-color: var(--p); }
+.nav-item.active svg { color: var(--p); }
+.nav-count {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 9px; font-weight:700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.nc-da  { background:var(--da-lo); color:var(--da);  border:1px solid rgba(239,68,68,.2);  }
+.nc-am  { background:var(--am-lo); color:var(--am);  border:1px solid rgba(245,158,11,.2); }
+.nc-p   { background:var(--p-lo);  color:var(--p);   border:1px solid var(--p-mid); }
+
+/* System status in sidebar footer */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(124,58,237,.08);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.sys-row {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+.sys-label { color: var(--t3); }
+.sys-val   { color: var(--t2); font-weight:500; }
+.sys-dot   { width:6px; height:6px; border-radius:50%; }
+.sys-dot.on  { background:var(--em); box-shadow:0 0 5px var(--em); }
+.sys-dot.off { background:var(--t4); }
+.sys-dot.warn{ background:var(--am); animation: blink .9s step-start infinite; }
+
+/* ═══════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════ */
+.topbar {
+  height: 52px;
+  background: var(--s0);
+  border-bottom: 1px solid rgba(124,58,237,.10);
+  display: flex; align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  z-index: 30;
+  flex-shrink: 0;
+}
+
+.topbar-breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--t3);
+}
+.topbar-breadcrumb span { color: var(--t2); }
+.topbar-breadcrumb .bc-sep { color: var(--t4); }
+
+.alert-ticker {
+  flex: 1;
+  overflow: hidden;
+  height: 26px;
+  position: relative;
+  margin: 0 12px;
+}
+.ticker-inner {
+  display: flex; align-items: center; gap: 24px;
+  white-space: nowrap;
+  animation: ticker-scroll 30s linear infinite;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+@keyframes ticker-scroll {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.ticker-item { display: flex; align-items: center; gap: 6px; }
+.ticker-dot  { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+
+.topbar-right { display:flex; align-items:center; gap:10px; margin-left:auto; }
+
+.status-capsule {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  font-family: var(--mono);
+  font-size: 10px; font-weight:600;
+  cursor: default;
+}
+.sc-ok   { border-color:rgba(16,185,129,.3);  background:rgba(16,185,129,.06);  color:var(--em); }
+.sc-warn { border-color:rgba(245,158,11,.3);  background:rgba(245,158,11,.06);  color:var(--am); }
+.sc-err  { border-color:rgba(239,68,68,.3);   background:rgba(239,68,68,.06);   color:var(--da); }
+.sc-dot  { width:5px; height:5px; border-radius:50%; background:currentColor; }
+.sc-dot.pulse { animation: blink 1.1s step-start infinite; }
+
+.topbar-clock {
+  font-family: var(--mono);
+  font-size: 13px; font-weight:700;
+  color: var(--t1);
+  letter-spacing: 1px;
+  padding: 0 12px;
+  border-left: 1px solid rgba(124,58,237,.15);
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--ui);
+  font-size: 12px; font-weight:600;
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: all .16s cubic-bezier(.4,0,.2,1);
+  border: 1px solid;
+  white-space: nowrap;
+  letter-spacing: .2px;
+}
+.btn-h34  { height:34px; padding:0 14px; }
+.btn-h28  { height:28px; padding:0 10px; font-size:11px; }
+.btn-h24  { height:24px; padding:0 8px;  font-size:10px; }
+.btn-icon { width:34px; padding:0; justify-content:center; }
+.btn-icon.h28 { width:28px; height:28px; }
+
+.btn-primary { background:var(--p); border-color:var(--p); color:#fff; }
+.btn-primary:hover { background:#6d28d9; box-shadow: var(--p-glow); }
+.btn-ghost   { background:transparent; border-color:var(--p-mid); color:var(--t2); }
+.btn-ghost:hover { background:var(--p-lo); border-color:var(--p-hi); color:var(--t1); }
+.btn-danger  { background:var(--da-lo); border-color:rgba(239,68,68,.35); color:var(--da); }
+.btn-danger:hover { background:rgba(239,68,68,.2); }
+.btn-emerald { background:var(--em-lo); border-color:rgba(16,185,129,.35); color:var(--em); }
+.btn-emerald:hover { background:rgba(16,185,129,.2); }
+.btn-muted   { background:var(--s2); border-color:rgba(255,255,255,.07); color:var(--t2); }
+.btn-muted:hover { border-color:rgba(255,255,255,.14); color:var(--t1); }
+
+/* ═══════════════════════════════════════════════
+   MAIN CANVAS
+═══════════════════════════════════════════════ */
+.main {
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--void);
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* FIX: views must not min-height:100% — causes overflow issues */
+
+/* subtle grid texture on main */
+.main::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124,58,237,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.view {
+  display: none;
+  padding: 20px 24px;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+}
+.view.active { display: flex; }
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 1100px) {
+  .shell { grid-template-columns: 64px 180px 1fr; }
+}
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 64px 1fr; }
+  .shell .sidebar { display: none; }
+  .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .g6040, .g4060, .g2, .g3 { grid-template-columns: minmax(0,1fr); }
+}
+
+/* ═══════════════════════════════════════════════
+   TYPOGRAPHY SCALE
+═══════════════════════════════════════════════ */
+.page-eyebrow {
+  font-family: var(--mono);
+  font-size: 9px; font-weight:700;
+  letter-spacing: 2px;
+  color: var(--p);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.page-title { font-size: 22px; font-weight:700; letter-spacing:-0.6px; color:var(--t1); line-height:1.2; }
+.page-sub   { font-size: 12px; color:var(--t3); margin-top:3px; }
+.section-label {
+  font-family: var(--mono);
+  font-size: 9px; font-weight:700;
+  letter-spacing: 1.5px;
+  color: var(--t4);
+  text-transform: uppercase;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(124,58,237,.08);
+  margin-bottom: 10px;
+}
+
+/* ═══════════════════════════════════════════════
+   CARD SYSTEM
+═══════════════════════════════════════════════ */
+.card {
+  background: var(--s1);
+  border: 1px solid rgba(124,58,237,.10);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  transition: border-color .2s;
+  position: relative;
+}
+.card:hover { border-color: rgba(124,58,237,.22); }
+/* top-edge accent */
+.card::before {
+  content:'';
+  position: absolute; top:0; left:16px; right:16px; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(124,58,237,.4) 50%, transparent);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.card:hover::before { opacity:1; }
+
+.card.accent-da::before { background: linear-gradient(90deg, transparent, rgba(239,68,68,.5) 50%, transparent); }
+.card.accent-em::before { background: linear-gradient(90deg, transparent, rgba(16,185,129,.5) 50%, transparent); }
+.card.accent-am::before { background: linear-gradient(90deg, transparent, rgba(245,158,11,.5) 50%, transparent); }
+
+.card-head {
+  padding: 13px 16px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  display: flex; align-items: center; gap: 10px;
+}
+.card-head-icon {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.chi-p  { background:var(--p-lo);  border:1px solid var(--p-mid); }
+.chi-da { background:var(--da-lo); border:1px solid var(--da-hi); }
+.chi-em { background:var(--em-lo); border:1px solid var(--em-hi); }
+.chi-am { background:var(--am-lo); border:1px solid var(--am-hi); }
+
+.card-head-text { flex:1; min-width:0; }
+.card-head-title { font-size:12px; font-weight:600; color:var(--t1); }
+.card-head-sub   { font-family:var(--mono); font-size:9px; color:var(--t3); margin-top:1px; }
+.card-body { padding:14px 16px; }
+.card-scroll { overflow-y:auto; }
+
+/* ═══════════════════════════════════════════════
+   STAT CARDS — propracované
+═══════════════════════════════════════════════ */
+.stats-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+
+/* All grid children must respect their column width */
+.g2 > *, .g3 > *, .g6040 > *, .g4060 > *, .stats-grid > * { min-width: 0; }
+
+.stat-card {
+  background: var(--s1);
+  border: 1px solid rgba(124,58,237,.10);
+  border-radius: var(--r-xl);
+  padding: 18px 20px 14px;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: all .2s;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
+.stat-card .sc-glow {
+  position: absolute; top: -20px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  filter: blur(30px);
+  opacity: .25;
+  transition: opacity .2s;
+}
+.stat-card:hover .sc-glow { opacity: .4; }
+.sc-glow.p  { background: var(--p); }
+.sc-glow.da { background: var(--da); }
+.sc-glow.am { background: var(--am); }
+.sc-glow.em { background: var(--em); }
+
+.sc-eyebrow { font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:1.5px; color:var(--t3); text-transform:uppercase; margin-bottom:10px; }
+.sc-number  { font-size:34px; font-weight:700; letter-spacing:-1.5px; color:var(--t1); line-height:1; }
+.sc-number.c-p  { color: var(--p); }
+.sc-number.c-da { color: var(--da); }
+.sc-number.c-am { color: var(--am); }
+.sc-number.c-em { color: var(--em); }
+.sc-footer  { display:flex; align-items:center; justify-content:space-between; margin-top:12px; }
+.sc-delta   { font-family:var(--mono); font-size:10px; font-weight:600; display:flex; align-items:center; gap:4px; }
+.sc-delta.up { color:var(--da); }
+.sc-delta.dn { color:var(--em); }
+.sc-spark   { flex:1; max-width:80px; height:28px; }
+
+/* ═══════════════════════════════════════════════
+   GRID LAYOUTS
+═══════════════════════════════════════════════ */
+.g2   { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.g3   { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.g6040{ display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:12px; }
+.g4060{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.5fr); gap:12px; }
+
+/* ═══════════════════════════════════════════════
+   BADGES
+═══════════════════════════════════════════════ */
+.badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-family:var(--mono);
+  font-size:9px; font-weight:700;
+  padding:2px 7px;
+  border-radius:4px;
+  text-transform:uppercase; letter-spacing:.7px;
+  border:1px solid;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.b-p  { background:var(--p-lo);  color:var(--p);  border-color:var(--p-mid); }
+.b-em { background:var(--em-lo); color:var(--em); border-color:rgba(16,185,129,.25); }
+.b-da { background:var(--da-lo); color:var(--da); border-color:rgba(239,68,68,.25); }
+.b-am { background:var(--am-lo); color:var(--am); border-color:rgba(245,158,11,.25); }
+.b-sk { background:var(--sk-lo); color:var(--sk); border-color:rgba(56,189,248,.25); }
+.b-mu { background:rgba(255,255,255,.04); color:var(--t3); border-color:rgba(255,255,255,.07); }
+.b-dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+.b-dot.blink { animation:blink 1.1s step-start infinite; }
+
+@keyframes blink { 50%{opacity:0} }
+
+/* ═══════════════════════════════════════════════
+   TABLE
+═══════════════════════════════════════════════ */
+.tbl { width:100%; border-collapse:collapse; }
+.tbl th {
+  padding:8px 14px;
+  font-family:var(--mono); font-size:9px; font-weight:700;
+  letter-spacing:1.1px; text-align:left;
+  color:var(--t4);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  text-transform:uppercase;
+  background:var(--s0);
+  white-space:nowrap;
+}
+.tbl td {
+  padding:10px 14px;
+  border-bottom:1px solid rgba(255,255,255,.025);
+  font-size:11px; color:var(--t2);
+  vertical-align:middle;
+}
+.tbl tr:last-child td { border-bottom:none; }
+.tbl tbody tr { transition:background .1s; }
+.tbl tbody tr:hover td { background:rgba(124,58,237,.05); }
+.mono-cell { font-family:var(--mono); font-size:10px; }
+.t1-cell   { color:var(--t1); font-weight:500; }
+.clickable { cursor:pointer; }
+
+/* ═══════════════════════════════════════════════
+   FORM
+═══════════════════════════════════════════════ */
+.label {
+  display:block;
+  font-family:var(--mono); font-size:9px; font-weight:700;
+  letter-spacing:1px; color:var(--t3);
+  text-transform:uppercase; margin-bottom:5px;
+}
+.input, .select, textarea.input {
+  display:block; width:100%;
+  background:var(--s2);
+  border:1px solid rgba(124,58,237,.2);
+  border-radius:var(--r);
+  color:var(--t1);
+  font-family:var(--mono); font-size:11px;
+  outline:none;
+  transition:border-color .15s, box-shadow .15s;
+}
+.input    { height:34px; padding:0 12px; }
+.select   { height:34px; padding:0 30px 0 12px; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23352F52' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 10px center; cursor:pointer; }
+textarea.input { height:auto; padding:10px 12px; resize:vertical; min-height:80px; line-height:1.6; }
+.input::placeholder { color:var(--t4); }
+.input:focus, .select:focus, textarea.input:focus {
+  border-color:var(--p);
+  box-shadow:0 0 0 3px rgba(124,58,237,.12);
+}
+.fg { display:flex; flex-direction:column; gap:5px; }
+
+/* Toggle */
+.tgl-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 0; border-bottom:1px solid rgba(255,255,255,.03);
+}
+.tgl-row:last-child { border-bottom:none; }
+.tgl-text { flex:1; padding-right:12px; }
+.tgl-name { font-size:12px; color:var(--t2); font-weight:500; }
+.tgl-desc { font-family:var(--mono); font-size:10px; color:var(--t3); margin-top:2px; }
+.tgl {
+  position:relative; width:38px; height:21px; flex-shrink:0;
+}
+.tgl input { opacity:0; width:0; height:0; }
+.tgl-sl {
+  position:absolute; inset:0;
+  background:var(--s3);
+  border:1px solid rgba(124,58,237,.2);
+  border-radius:21px; cursor:pointer;
+  transition:all .2s;
+}
+.tgl-sl::before {
+  content:''; position:absolute;
+  left:3px; top:50%; transform:translateY(-50%);
+  width:15px; height:15px;
+  background:var(--t3); border-radius:50%;
+  transition:all .2s;
+}
+.tgl input:checked + .tgl-sl { background:var(--p-lo); border-color:var(--p); }
+.tgl input:checked + .tgl-sl::before { transform:translate(17px,-50%); background:var(--p); box-shadow:0 0 7px rgba(124,58,237,.6); }
+
+/* ═══════════════════════════════════════════════
+   TERMINAL / CODE BLOCK
+═══════════════════════════════════════════════ */
+.term {
+  background:#050410;
+  border:1px solid rgba(124,58,237,.15);
+  border-radius:var(--r-lg);
+  font-family:var(--mono);
+  font-size:11px;
+  overflow:auto;
+  position:relative;
+}
+.term-head {
+  background:rgba(124,58,237,.06);
+  border-bottom:1px solid rgba(124,58,237,.12);
+  padding:6px 12px;
+  display:flex; align-items:center; gap:6px;
+}
+.term-dot { width:8px; height:8px; border-radius:50%; }
+.term-dot.r { background:#EF4444; } .term-dot.y { background:#F59E0B; } .term-dot.g { background:#10B981; }
+.term-fn { font-size:10px; color:var(--t3); margin-left:6px; }
+.term-body { padding:14px 16px; line-height:1.75; color:var(--t2); }
+.kw  { color:#A78BFA; } /* purple keywords */
+.st  { color:#6EE7B7; } /* emerald strings */
+.nm  { color:#FCD34D; } /* amber numbers */
+.cm  { color:var(--t4); font-style:italic; }
+.ip  { color:#7DD3FC; } /* sky IPs */
+.pr  { color:var(--p); user-select:none; }
+.cursor::after { content:'█'; color:var(--p); animation:blink .9s step-start infinite; }
+
+/* ═══════════════════════════════════════════════
+   TIMELINE / FEED
+═══════════════════════════════════════════════ */
+.feed { display:flex; flex-direction:column; }
+.feed-item {
+  display:grid;
+  grid-template-columns:8px 1fr auto;
+  gap:10px;
+  padding:10px 16px;
+  border-bottom:1px solid rgba(255,255,255,.025);
+  align-items:start;
+  transition:background .1s;
+  cursor:default;
+}
+.feed-item:hover { background:rgba(124,58,237,.04); }
+.feed-item:last-child { border-bottom:none; }
+.fi-dot {
+  width:8px; height:8px; border-radius:50%;
+  flex-shrink:0; margin-top:4px;
+  border:1.5px solid;
+}
+.fi-dot.da { background:rgba(239,68,68,.2);  border-color:var(--da); box-shadow:0 0 5px rgba(239,68,68,.4); }
+.fi-dot.am { background:rgba(245,158,11,.2); border-color:var(--am); }
+.fi-dot.p  { background:rgba(124,58,237,.2); border-color:var(--p);  }
+.fi-dot.em { background:rgba(16,185,129,.2); border-color:var(--em); }
+.fi-dot.sk { background:rgba(56,189,248,.2); border-color:var(--sk); }
+.fi-title { font-size:12px; font-weight:500; color:var(--t1); margin-bottom:2px; }
+.fi-meta  { font-family:var(--mono); font-size:10px; color:var(--t3); display:flex; gap:10px; flex-wrap:wrap; }
+.fi-time  { font-family:var(--mono); font-size:10px; color:var(--t4); flex-shrink:0; padding-top:3px; }
+
+/* ═══════════════════════════════════════════════
+   IOC / LIST ROWS
+═══════════════════════════════════════════════ */
+.list-row {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 14px;
+  border-bottom:1px solid rgba(255,255,255,.025);
+  transition:background .1s; cursor:default;
+}
+.list-row:hover { background:rgba(124,58,237,.04); }
+.list-row:last-child { border-bottom:none; }
+
+/* ═══════════════════════════════════════════════
+   CHIPS
+═══════════════════════════════════════════════ */
+.chip-group { display:flex; flex-wrap:wrap; gap:5px; }
+.chip {
+  display:inline-flex; align-items:center;
+  height:24px; padding:0 10px;
+  background:var(--s2); border:1px solid rgba(255,255,255,.07);
+  border-radius:20px;
+  font-family:var(--mono); font-size:10px; color:var(--t3);
+  cursor:pointer; transition:all .14s; user-select:none;
+}
+.chip:hover, .chip.on { background:var(--p-lo); border-color:var(--p-mid); color:var(--p); }
+
+/* ═══════════════════════════════════════════════
+   PROGRESS / BARS
+═══════════════════════════════════════════════ */
+.pbar { height:3px; background:var(--s3); border-radius:2px; overflow:hidden; }
+.pbar-fill { height:100%; border-radius:2px; transition:width .6s ease; }
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+#toasts {
+  position:fixed; bottom:20px; right:20px;
+  display:flex; flex-direction:column; gap:8px;
+  z-index:1000; pointer-events:none;
+}
+.toast {
+  display:flex; align-items:flex-start; gap:12px;
+  background:var(--s2);
+  border:1px solid rgba(124,58,237,.22);
+  border-left:3px solid var(--p);
+  border-radius:var(--r-lg);
+  padding:12px 16px;
+  font-size:12px; color:var(--t1);
+  box-shadow:0 12px 32px rgba(0,0,0,.6), 0 0 0 1px rgba(124,58,237,.08);
+  animation:toast-slide .22s cubic-bezier(.4,0,.2,1);
+  pointer-events:auto;
+  max-width:300px;
+  min-width:220px;
+}
+@keyframes toast-slide { from { opacity:0; transform:translateX(16px); } }
+.toast.da { border-left-color:var(--da); }
+.toast.am { border-left-color:var(--am); }
+.toast.em { border-left-color:var(--em); }
+.toast-icon { font-size:16px; flex-shrink:0; }
+.toast-title { font-weight:600; font-size:12px; margin-bottom:2px; }
+.toast-body  { font-family:var(--mono); font-size:10px; color:var(--t2); }
+
+/* ═══════════════════════════════════════════════
+   MISC
+═══════════════════════════════════════════════ */
+.sep-h { height:1px; background:rgba(124,58,237,.08); }
+.risk-arc-wrap { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.risk-arc-val  { font-size:28px; font-weight:700; letter-spacing:-1px; }
+.risk-arc-lbl  { font-family:var(--mono); font-size:9px; letter-spacing:1px; color:var(--t3); text-transform:uppercase; }
+
+/* ═══════════════════════════════════════════════
+   SCROLLABLE PANELS
+═══════════════════════════════════════════════ */
+.panel-scroll { overflow-y:auto; max-height:320px; }
+.panel-scroll-sm { overflow-y:auto; max-height:220px; }
+
+/* Port row */
+.port-grid {
+  display:grid; grid-template-columns:64px 100px 70px 1fr 90px;
+  gap:0; align-items:center;
+  padding:9px 14px;
+  border-bottom:1px solid rgba(255,255,255,.025);
+  font-family:var(--mono); font-size:10px;
+  transition:background .1s;
+}
+.port-grid:hover { background:rgba(124,58,237,.04); }
+.port-grid.hdr {
+  background:var(--s0);
+  color:var(--t4); font-size:9px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  padding:7px 14px;
+}
+.port-num { color:var(--sk); font-weight:700; }
+.live-dot { width:6px; height:6px; border-radius:50%; display:inline-block; }
+.live-dot.on   { background:var(--em); box-shadow:0 0 5px var(--em); animation:blink 1.8s ease-in-out infinite; }
+.live-dot.off  { background:var(--t4); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- ═════════════════════════════════════════
+     RAIL
+════════════════════════════════════════= -->
+<div class="rail">
+  <div class="rail-logo" onclick="toast('','p','RabbitHollow','Deception Intelligence Platform — Secure Edition')" title="RabbitHollow" style="padding:0;overflow:hidden;">
+    <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <!-- Hex bg -->
+      <rect width="36" height="36" rx="9" fill="#1a0d2e"/>
+      <!-- Honeycomb hint -->
+      <polygon points="18,3 22,6 22,12 18,15 14,12 14,6" fill="none" stroke="#F5A800" stroke-width="0.5" opacity="0.3"/>
+      <!-- Cape -->
+      <path d="M15,20 Q12,24 10,28 Q12,30 14,28 Q16,24 17,22 Z" fill="#CC1111"/>
+      <!-- Body -->
+      <ellipse cx="19" cy="23" rx="7" ry="8" fill="#e8e4f8"/>
+      <!-- Head -->
+      <ellipse cx="19" cy="15" rx="7" ry="7" fill="#ffffff"/>
+      <!-- Left ear -->
+      <path d="M15,12 Q13,6 14,3 Q16,2 17,4 Q17,8 16,12Z" fill="#f0eef8"/>
+      <path d="M15.5,11 Q14,6 14.5,4 Q15.5,3 16,5 Q16,8 15.8,11Z" fill="#E87070"/>
+      <!-- Right ear -->
+      <path d="M22,12 Q23,6 23,3 Q25,2 25,4 Q25,8 23,12Z" fill="#f0eef8"/>
+      <path d="M22.2,11 Q23,6 23,4 Q24.5,3 24.5,5 Q24.5,8 23,11Z" fill="#E87070"/>
+      <!-- Eyes (fierce) -->
+      <ellipse cx="16" cy="15" rx="2" ry="2" fill="#1a1030"/>
+      <ellipse cx="22" cy="15" rx="2" ry="2" fill="#1a1030"/>
+      <circle cx="15.3" cy="14.3" r="0.6" fill="#fff" opacity="0.8"/>
+      <circle cx="21.3" cy="14.3" r="0.6" fill="#fff" opacity="0.8"/>
+      <!-- Brows -->
+      <path d="M13.5,13 Q16,12 17,13" stroke="#1a1030" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <path d="M21,13 Q22,12 24.5,13" stroke="#1a1030" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <!-- Nose -->
+      <ellipse cx="19" cy="17.5" rx="1.2" ry="0.8" fill="#CC7799"/>
+      <!-- Medal -->
+      <circle cx="19" cy="19" r="2" fill="#F5A800"/>
+      <circle cx="19" cy="19" r="1.2" fill="#C8960C"/>
+      <!-- Speed lines -->
+      <line x1="5" y1="21" x2="12" y2="22" stroke="#4455EE" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+      <line x1="4" y1="23.5" x2="11" y2="24" stroke="#3344DD" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/>
+      <line x1="5" y1="26" x2="11" y2="26" stroke="#4455EE" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <button class="rail-btn active" data-tip="Dashboard" onclick="nav(this,'overview')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+  </button>
+  <button class="rail-btn" data-tip="Honeypots" onclick="nav(this,'honeypot')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+    <div class="dot"></div>
+  </button>
+  <button class="rail-btn" data-tip="Honeynet" onclick="nav(this,'honeynet')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v4m-5.2 6 4.2-4m5 4-4.2-4"/></svg>
+  </button>
+  <button class="rail-btn" data-tip="Breadcrumbs" onclick="nav(this,'breadcrumb')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18 15 12 9 6"/></svg>
+  </button>
+  <div class="rail-sep"></div>
+  <button class="rail-btn" data-tip="Threat Hunt" onclick="nav(this,'threathunt')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  </button>
+  <button class="rail-btn" data-tip="IOC Intel" onclick="nav(this,'ioc')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M9 8h6M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+  </button>
+  <button class="rail-btn" data-tip="Profiles" onclick="nav(this,'attacker')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+  </button>
+  <div class="rail-sep"></div>
+  <button class="rail-btn" data-tip="AI Agent" onclick="nav(this,'aiagent')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 1 4 4v2H8V6a4 4 0 0 1 4-4z"/><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M9 14h.01M15 14h.01M9 18h6"/></svg>
+  </button>
+  <button class="rail-btn" data-tip="Reports" onclick="nav(this,'reports')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+  </button>
+  <button class="rail-btn" data-tip="IP Tracker" onclick="nav(this,'iptrack')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+  </button>
+  <button class="rail-btn" data-tip="Assets" onclick="nav(this,'assets')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+  </button>
+  <button class="rail-btn" data-tip="Tickets" onclick="nav(this,'tickets')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 5v2M15 11v2M15 17v2M5 5h10a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg>
+    <div class="dot"></div>
+  </button>
+  <div class="rail-sep"></div>
+  <button class="rail-btn" data-tip="Security" onclick="nav(this,'security')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  </button>
+  <button class="rail-btn" data-tip="Audit Log" onclick="nav(this,'audit')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+  </button>
+  <button class="rail-btn" data-tip="Settings" onclick="nav(this,'settings')">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+  </button>
+  <div class="rail-avatar">🐇</div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════= -->
+<div class="sidebar">
+  <div class="sidebar-head">
+    <div class="sidebar-head-label">Workspace</div>
+    <div class="sidebar-head-title">Global Operations</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Overview</div>
+    <div class="nav-item active" onclick="navSide(this,'overview')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Dashboard
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Deception</div>
+    <div class="nav-item" onclick="navSide(this,'honeypot')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      Honeypot Builder
+      <span class="nav-count nc-p">14</span>
+    </div>
+    <div class="nav-item" onclick="navSide(this,'honeynet')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v4m-5.2 6 4.2-4m5 4-4.2-4"/></svg>
+      Honeynet Designer
+    </div>
+    <div class="nav-item" onclick="navSide(this,'breadcrumb')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18 15 12 9 6"/></svg>
+      Breadcrumb Trails
+      <span class="nav-count nc-am">2</span>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Intelligence</div>
+    <div class="nav-item" onclick="navSide(this,'threathunt')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Threat Hunting
+      <span class="nav-count nc-da">!</span>
+    </div>
+    <div class="nav-item" onclick="navSide(this,'ioc')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6M9 16h6M9 8h6M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+      IOC Intelligence
+    </div>
+    <div class="nav-item" onclick="navSide(this,'attacker')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Attacker Profiles
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Operations</div>
+    <div class="nav-item" onclick="navSide(this,'aiagent')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 1 4 4v2H8V6a4 4 0 0 1 4-4z"/><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M9 14h.01M15 14h.01M9 18h6"/></svg>
+      AI Cyber Agent
+      <span class="nav-count nc-p">LLM</span>
+    </div>
+    <div class="nav-item" onclick="navSide(this,'reports')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+      Auto Reports
+    </div>
+    <div class="nav-item" onclick="navSide(this,'iptrack')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      IP Activity Tracker
+    </div>
+    <div class="nav-item" onclick="navSide(this,'assets')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      Asset Management
+      <span class="nav-count nc-p">42</span>
+    </div>
+    <div class="nav-item" onclick="navSide(this,'tickets')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 5v2M15 11v2M15 17v2M5 5h10a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg>
+      Security Tickets
+      <span class="nav-count nc-da">5</span>
+    </div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Governance</div>
+    <div class="nav-item" onclick="navSide(this,'security')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Security & Guardrails
+      <span class="nav-count nc-em">OK</span>
+    </div>
+    <div class="nav-item" onclick="navSide(this,'audit')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+      Audit Log
+      <span class="nav-count nc-p">24</span>
+    </div>
+    <div class="nav-item" onclick="navSide(this,'settings')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      Settings
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="section-label" style="margin-bottom:8px;">System Status</div>
+    <div class="sys-row"><span class="sys-label">Radar Engine</span><span style="display:flex;align-items:center;gap:5px;"><span class="sys-dot on"></span><span class="sys-val">ONLINE</span></span></div>
+    <div class="sys-row"><span class="sys-label">SDR Module</span><span style="display:flex;align-items:center;gap:5px;"><span class="sys-dot warn"></span><span class="sys-val" style="color:var(--am);">DEGRADED</span></span></div>
+    <div class="sys-row"><span class="sys-label">Intel Feed</span><span style="display:flex;align-items:center;gap:5px;"><span class="sys-dot on"></span><span class="sys-val">LIVE</span></span></div>
+    <div class="sys-row"><span class="sys-label">Session</span><span class="sys-val" id="uptime-val">00:00:00</span></div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     TOPBAR
+════════════════════════════════════════= -->
+<div class="topbar">
+  <div class="topbar-breadcrumb">
+    <span style="color:var(--t3);">RabbitHollow</span>
+    <span class="bc-sep">/</span>
+    <span id="tb-section">Dashboard</span>
+  </div>
+  <div class="alert-ticker">
+    <div class="ticker-inner" id="ticker">
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--da)"></span><span style="color:var(--da)">CRIT</span>&nbsp;SSH brute-force on HNY-SSH-01 — 185.220.101.45</span>
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--am)"></span><span style="color:var(--am)">WARN</span>&nbsp;New IMSI session — DB Honeypot 10.0.0.88:3306</span>
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--p)"></span><span style="color:var(--p)">INFO</span>&nbsp;Breadcrumb activated — .env lure read by 45.142.212.100</span>
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--em)"></span><span style="color:var(--em)">OK</span>&nbsp;14 Honeypots LIVE — no outages</span>
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--da)"></span><span style="color:var(--da)">CRIT</span>&nbsp;Canarytoken HTTP triggered — token-api-007</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="status-capsule sc-ok"><div class="sc-dot pulse"></div>14 LIVE</div>
+    <div class="status-capsule sc-warn"><div class="sc-dot"></div>3 ACTIVE</div>
+    <div class="status-capsule sc-err"><div class="sc-dot pulse"></div>ALERT</div>
+    <div class="topbar-clock" id="clock">00:00:00 UTC</div>
+    <button class="btn btn-primary btn-h28" onclick="toast('🚀','p','Deploying Decoy','Honeypot spinning up on 10.0.0.88:3307')">
+      <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Deploy
+    </button>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     MAIN
+════════════════════════════════════════= -->
+<div class="main" id="main">
+
+<!-- ══════════════════ OVERVIEW ══════════════════ -->
+<div class="view active" id="view-overview">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Global Operations Center</div>
+      <div class="page-title">Threat Overview</div>
+      <div class="page-sub">Live deception network — 14 active nodes · Session <span id="sess-ts" style="color:var(--p);font-family:var(--mono);">00:00:00</span></div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-muted btn-h28" onclick="goTo('reports');setTimeout(generateReport,200)">Export Report</button>
+      <button class="btn btn-ghost btn-h28" onclick="goTo('honeypot')">+ New Decoy</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="sc-glow p"></div>
+      <div class="sc-eyebrow">Active Honeypots</div>
+      <div class="sc-number c-p" data-countup="14">0</div>
+      <div class="sc-footer">
+        <div class="sc-delta up">↑ 2 today</div>
+        <canvas class="sc-spark" id="spark-hp"></canvas>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-glow da"></div>
+      <div class="sc-eyebrow">Intrusions Caught</div>
+      <div class="sc-number c-da" data-countup="247">0</div>
+      <div class="sc-footer">
+        <div class="sc-delta up">↑ 18 / 24h</div>
+        <canvas class="sc-spark" id="spark-int"></canvas>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-glow am"></div>
+      <div class="sc-eyebrow">Unique Attacker IPs</div>
+      <div class="sc-number c-am" data-countup="83">0</div>
+      <div class="sc-footer">
+        <div class="sc-delta up">↑ 6 new</div>
+        <canvas class="sc-spark" id="spark-ips"></canvas>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-glow em"></div>
+      <div class="sc-eyebrow">IOCs Collected</div>
+      <div class="sc-number c-em" data-countup="1409">0</div>
+      <div class="sc-footer">
+        <div class="sc-delta dn">0 false positives</div>
+        <canvas class="sc-spark" id="spark-ioc"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN ROW -->
+  <div class="g6040" style="align-items:start;">
+    <!-- Live Feed -->
+    <div class="card accent-da" style="display:flex;flex-direction:column;">
+      <div class="card-head">
+        <div class="card-head-icon chi-da">⚡</div>
+        <div class="card-head-text">
+          <div class="card-head-title">Live Event Feed</div>
+          <div class="card-head-sub">Real-time threat activity</div>
+        </div>
+        <span class="badge b-da"><span class="b-dot blink"></span>LIVE</span>
+      </div>
+      <div class="feed panel-scroll" id="event-feed" style="max-height:320px;"></div>
+    </div>
+
+    <!-- Top IPs -->
+    <div class="card" style="display:flex;flex-direction:column;">
+      <div class="card-head">
+        <div class="card-head-icon chi-p">☠</div>
+        <div class="card-head-text">
+          <div class="card-head-title">Top Attacker IPs</div>
+          <div class="card-head-sub">Ranked by activity</div>
+        </div>
+        <button class="btn btn-danger btn-h24" onclick="toast('🚫','em','Blocklist Updated','All 5 IPs sent to firewall')">Block All</button>
+      </div>
+      <div class="panel-scroll">
+        <table class="tbl" id="ip-table"><thead><tr>
+          <th>IP Address</th><th>Origin</th><th>Hits</th><th>Risk</th><th></th>
+        </tr></thead><tbody id="ip-tbody"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="g3">
+    <!-- Risk Score Gauge -->
+    <div class="card" style="display:flex;flex-direction:column;">
+      <div class="card-head">
+        <div class="card-head-icon chi-da">🎯</div>
+        <div class="card-head-text">
+          <div class="card-head-title">Global Risk Score</div>
+          <div class="card-head-sub">Composite threat index</div>
+        </div>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:8px;">
+        <svg viewBox="0 0 160 100" style="width:100%;max-width:200px;">
+          <path d="M 20 85 A 60 60 0 0 1 140 85" fill="none" stroke="rgba(124,58,237,.12)" stroke-width="12" stroke-linecap="round"/>
+          <path id="risk-arc" d="M 20 85 A 60 60 0 0 1 140 85" fill="none" stroke="url(#rg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+          <defs>
+            <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#10B981"/>
+              <stop offset="50%"  stop-color="#F59E0B"/>
+              <stop offset="100%" stop-color="#EF4444"/>
+            </linearGradient>
+          </defs>
+          <text x="80" y="82" text-anchor="middle" font-family="'Space Grotesk'" font-size="26" font-weight="700" fill="#EDEAF8" id="risk-txt">0</text>
+          <text x="80" y="98" text-anchor="middle" font-family="'JetBrains Mono'" font-size="8" fill="#5A5475" letter-spacing="1">RISK INDEX</text>
+        </svg>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;width:100%;">
+          <div style="text-align:center;padding:6px;background:var(--s2);border-radius:var(--r);border:1px solid rgba(255,255,255,.04);">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-bottom:2px;">VECTORS</div>
+            <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--da);">8</div>
+          </div>
+          <div style="text-align:center;padding:6px;background:var(--s2);border-radius:var(--r);border:1px solid rgba(255,255,255,.04);">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-bottom:2px;">BLOCKED</div>
+            <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--em);">31</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MITRE Coverage -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-icon chi-am">🛡</div>
+        <div class="card-head-text">
+          <div class="card-head-title">MITRE ATT&CK</div>
+          <div class="card-head-sub">Detection coverage</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="mitre-mini" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;"></div>
+      </div>
+    </div>
+
+    <!-- Honeypot Quick Status -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-icon chi-em">🔮</div>
+        <div class="card-head-text">
+          <div class="card-head-title">Node Status</div>
+          <div class="card-head-sub">All decoy services</div>
+        </div>
+        <span class="badge b-em">14 LIVE</span>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:7px;">
+        <div id="node-quick"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ HONEYPOT ══════════════════ -->
+<div class="view" id="view-honeypot">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Deception Layer</div>
+      <div class="page-title">Honeypot Builder</div>
+      <div class="page-sub">Design, configure and deploy deception nodes</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-muted btn-h28" onclick="toast('📥','p','Import','Template import (mock) — paste YAML later')">Import Template</button>
+      <button class="btn btn-primary btn-h28" onclick="deployHP()">
+        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Deploy Node
+      </button>
+    </div>
+  </div>
+
+  <div class="g4060" style="align-items:start;">
+    <!-- Config -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-icon chi-p">⚙</div>
+          <div class="card-head-text"><div class="card-head-title">Node Configuration</div></div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:11px;">
+          <div class="g2">
+            <div class="fg"><label class="label">Node Name</label><input class="input" id="hp-name" value="PROD-DB-FAKE-01" oninput="updatePreview()"></div>
+            <div class="fg"><label class="label">Decoy Type</label>
+              <select class="select" id="hp-type" onchange="updatePreview()">
+                <option>SSH Server</option><option>FTP Server</option>
+                <option selected>Database (MySQL)</option>
+                <option>HTTP Web App</option><option>RDP Service</option>
+                <option>SMB Share</option><option>SMTP Relay</option>
+                <option>Industrial (Modbus)</option><option>Kubernetes API</option>
+              </select>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="fg"><label class="label">Bind IP</label><input class="input" id="hp-ip" value="10.0.0.88" oninput="updatePreview()"></div>
+            <div class="fg"><label class="label">Port</label><input class="input" id="hp-port" value="3306" oninput="updatePreview()"></div>
+          </div>
+          <div class="fg"><label class="label">Decoy Profile</label>
+            <select class="select" id="hp-profile" onchange="updatePreview()">
+              <option>MySQL 8.0 — Ubuntu 22.04</option>
+              <option>PostgreSQL 14 — Debian</option>
+              <option>MSSQL 2019 — Windows Server 2022</option>
+            </select>
+          </div>
+          <div class="fg"><label class="label">Banner Override</label>
+            <input class="input" id="hp-banner" value="5.7.38-MySQL Community Server" oninput="updatePreview()">
+          </div>
+          <div class="fg"><label class="label">Lure / Seed Data</label>
+            <textarea class="input" id="hp-lure">-- Fake DB: payments_archive
+-- Tables: transactions, user_cards, api_keys
+-- Seeded creds: admin / P@ssw0rd123</textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-p">🔧</div><div class="card-head-text"><div class="card-head-title">Capabilities</div></div></div>
+        <div class="card-body">
+          <div style="padding:8px 10px;margin-bottom:8px;background:var(--am-lo);border:1px solid rgba(245,158,11,.25);border-radius:var(--r);font-size:10px;color:var(--t2);font-family:var(--mono);">
+            ⚠ SECURITY: Credential harvesting logs only decoy attempts. Production secrets are never present in this environment.
+          </div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Session Recording</div><div class="tgl-desc">Full TTY / interaction capture</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">GeoIP Enrichment</div><div class="tgl-desc">Resolve attacker location on connect</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Credential Harvesting</div><div class="tgl-desc">Log all auth attempts with passwords</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Canarytoken Injection</div><div class="tgl-desc">Embed tracking tokens in served files</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Auto-Breadcrumb Plant</div><div class="tgl-desc">Automatically seed trails on interaction</div></div><label class="tgl"><input type="checkbox"><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Attacker Fingerprinting</div><div class="tgl-desc">JA3 / hassh / UA profiling</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">SIEM Webhook Export</div><div class="tgl-desc">Push events to external endpoint</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: deployed + preview -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card" style="flex:1;">
+        <div class="card-head">
+          <div class="card-head-icon chi-em">📡</div>
+          <div class="card-head-text"><div class="card-head-title">Deployed Nodes</div></div>
+          <span class="badge b-em">14 LIVE</span>
+        </div>
+        <div class="port-grid hdr"><span>PORT</span><span>SERVICE</span><span>HITS</span><span>BANNER</span><span>STATUS</span></div>
+        <div id="hp-list" class="panel-scroll"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-icon chi-p">📋</div>
+          <div class="card-head-text"><div class="card-head-title">Config Preview</div><div class="card-head-sub">YAML — live update</div></div>
+        </div>
+        <div class="term">
+          <div class="term-head"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span class="term-fn">honeypot.yml</span></div>
+          <div class="term-body" id="hp-preview"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ HONEYNET ══════════════════ -->
+<div class="view" id="view-honeynet">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Deception Layer</div>
+      <div class="page-title">Honeynet Designer</div>
+      <div class="page-sub">Topology, segmentation and containment of the full deception network</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-muted btn-h28" onclick="toast('🗺','p','Topology','Topology JSON exported (mock)')">Export Topology</button>
+      <button class="btn btn-primary btn-h28" onclick="toast('🌐','p','Node Added','New decoy VLAN segment created')">+ Add Node</button>
+    </div>
+  </div>
+  <div class="g4060" style="align-items:start;">
+    <div class="card" style="position:relative;overflow:hidden;">
+      <div class="card-head">
+        <div class="card-head-icon chi-p">🗺</div>
+        <div class="card-head-text"><div class="card-head-title">Live Network Topology</div><div class="card-head-sub">Click nodes to inspect</div></div>
+        <span class="badge b-em">● LIVE</span>
+      </div>
+      <canvas id="net-canvas" style="width:100%;height:420px;display:block;background:#050410;border-radius:0 0 10px 10px;"></canvas>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-p">⚙</div><div class="card-head-text"><div class="card-head-title">Network Configuration</div></div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+          <div class="g2">
+            <div class="fg"><label class="label">VLAN ID</label><input class="input" value="10"></div>
+            <div class="fg"><label class="label">Subnet</label><input class="input" value="10.10.0.0/24"></div>
+          </div>
+          <div class="fg"><label class="label">Gateway Decoy</label><input class="input" value="10.10.0.1"></div>
+          <div class="section-label" style="margin-top:4px;">Segment Roles</div>
+          <div class="chip-group">
+            <div class="chip on">DMZ</div><div class="chip on">Internal LAN</div>
+            <div class="chip">OT / ICS</div><div class="chip on">Database Tier</div>
+            <div class="chip">Cloud Egress</div><div class="chip">Active Directory</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-da">🔒</div><div class="card-head-text"><div class="card-head-title">Isolation & Containment</div></div><span class="badge b-em">HARD ENFORCED</span></div>
+        <div class="card-body">
+          <div style="padding:8px 10px;margin-bottom:8px;background:var(--em-lo);border:1px solid rgba(16,185,129,.25);border-radius:var(--r);font-size:10px;color:var(--t2);">
+            Business rule: Decoy network has zero routes to production. Continuous probe every 30s. Breach of isolation = automatic shutdown of all nodes.
+          </div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Full Network Isolation</div><div class="tgl-desc">Honeynets cannot reach production (no route)</div></div><label class="tgl"><input type="checkbox" checked disabled><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Attacker Containment</div><div class="tgl-desc">Loop attacker inside deception env</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">DNS Sinkholing</div><div class="tgl-desc">Redirect C2 domains to analysis node</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Lateral Movement Alert</div><div class="tgl-desc">Alert on cross-segment pivoting</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Auto-shutdown on isolation breach</div><div class="tgl-desc">Kill all decoys if prod route appears</div></div><label class="tgl"><input type="checkbox" checked disabled><div class="tgl-sl"></div></label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ BREADCRUMB ══════════════════ -->
+<div class="view" id="view-breadcrumb">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Deception Layer</div>
+      <div class="page-title">Breadcrumb Trails</div>
+      <div class="page-sub">Plant lures to guide attackers deeper into the deception environment</div>
+    </div>
+    <button class="btn btn-primary btn-h28" onclick="toast('🍞','am','Trail Created','New breadcrumb configured — ready to plant')">+ New Trail</button>
+  </div>
+  <div class="g2" style="align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-am">🍞</div><div class="card-head-text"><div class="card-head-title">Trail Builder</div></div><span class="badge b-am">DRAFT</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+          <div class="fg"><label class="label">Trail Name</label><input class="input" value="OpsProd-CredentialLeak"></div>
+          <div class="fg"><label class="label">Lure Type</label>
+            <select class="select">
+              <option>Fake Credentials File (.env)</option>
+              <option>SSH Private Key</option>
+              <option>Database Connection String</option>
+              <option>Canarytoken URL in Bash History</option>
+              <option>Fake AWS Access Keys</option>
+              <option>Hard-coded API key in JS</option>
+              <option>Password Manager Export (CSV)</option>
+              <option>Fake VPN Config (.ovpn)</option>
+            </select>
+          </div>
+          <div class="fg"><label class="label">Plant Location</label><input class="input" value="/home/admin/.bash_history"></div>
+          <div class="fg"><label class="label">Lure Content</label>
+            <textarea class="input">mysql -h db-prod-primary.internal -u dbadmin -pS3cur3P@ss!
+scp /var/backups/2026-08-24.sql.gz admin@192.168.1.50:/mnt/backup/</textarea>
+          </div>
+          <div class="fg"><label class="label">Leads Attacker To</label>
+            <select class="select">
+              <option>PROD-DB-FAKE-01 (MySQL :3306)</option>
+              <option>ADMIN-SMB-FAKE (SMB :445)</option>
+              <option>Canarytoken HTTP Trap</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-h34" style="width:100%;" onclick="toast('🌱','am','Trail Planted','Lure deployed and active on target node')">Plant Trail</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-p">🏷</div><div class="card-head-text"><div class="card-head-title">Canarytoken Generator</div></div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <div class="g2">
+            <button class="btn btn-muted btn-h34" onclick="toast('🔗','p','Canarytoken','HTTP canary URL copied to clipboard')">🔗 HTTP URL</button>
+            <button class="btn btn-muted btn-h34" onclick="toast('🌐','p','Canarytoken','DNS canary domain generated')">🌐 DNS Token</button>
+            <button class="btn btn-muted btn-h34" onclick="toast('📄','p','Canarytoken','Word doc with canary ready for download')">📄 Word Doc</button>
+            <button class="btn btn-muted btn-h34" onclick="toast('☁','p','Canarytoken','Fake AWS key pair generated')">☁ AWS Key</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-am">🗺</div><div class="card-head-text"><div class="card-head-title">Active Trails</div></div></div>
+        <div class="feed panel-scroll" id="bc-feed"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-da">🔔</div><div class="card-head-text"><div class="card-head-title">Triggered Tokens</div></div><span class="badge b-da">2 FIRED</span></div>
+        <div id="canary-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ THREAT HUNT ══════════════════ -->
+<div class="view" id="view-threathunt">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Intelligence</div>
+      <div class="page-title">Threat Hunting</div>
+      <div class="page-sub">Sigma rules · hypothesis-driven hunting · live query engine</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-muted btn-h28" onclick="toast('📐','p','Sigma','Sigma rule import dialog (mock)')">Import Sigma</button>
+      <button class="btn btn-primary btn-h28" onclick="runHunt()">▶ Run Hunt</button>
+    </div>
+  </div>
+  <div class="g2" style="align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-p">🔍</div><div class="card-head-text"><div class="card-head-title">Hunt Query</div><div class="card-head-sub">SPL / KQL / Sigma / SQL</div></div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <div class="chip-group" id="lang-chips">
+            <div class="chip on" onclick="setLang(this,'SPL')">SPL</div>
+            <div class="chip" onclick="setLang(this,'KQL')">KQL</div>
+            <div class="chip" onclick="setLang(this,'Sigma')">Sigma</div>
+            <div class="chip" onclick="setLang(this,'SQL')">SQL</div>
+          </div>
+          <textarea class="input" id="hunt-q" style="min-height:120px;font-size:11px;">index=honeypot sourcetype=ssh_auth
+| where action="login_attempt"
+| stats count by src_ip, user, _time
+| where count > 5
+| eval threat_score=if(count>20,"HIGH","MEDIUM")
+| sort -count | head 50</textarea>
+          <div style="display:flex;gap:8px;">
+            <select class="select" style="flex:1;"><option>All Honeypots</option><option>SSH Only</option><option>Database</option><option>Web</option></select>
+            <select class="select" style="width:110px;"><option>Last 24h</option><option>Last 7d</option><option>Last 30d</option></select>
+            <button class="btn btn-primary btn-h34" onclick="runHunt()">Run</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-da">📊</div><div class="card-head-text"><div class="card-head-title">Hunt Results</div></div><span class="badge b-am" id="hunt-badge">0 matches</span></div>
+        <div id="hunt-results" class="panel-scroll-sm">
+          <div style="padding:24px;text-align:center;color:var(--t4);font-family:var(--mono);font-size:11px;">Run a query to see results</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-am">📐</div><div class="card-head-text"><div class="card-head-title">Detection Rules</div></div></div>
+        <div id="sigma-rules" style="padding:10px;display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-p">🎯</div><div class="card-head-text"><div class="card-head-title">MITRE ATT&CK Coverage</div></div></div>
+        <div class="card-body" id="mitre-full" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ IOC ══════════════════ -->
+<div class="view" id="view-ioc">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Intelligence</div>
+      <div class="page-title">IOC Intelligence</div>
+      <div class="page-sub">Indicators of Compromise · enrichment pipeline · STIX export</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-muted btn-h28" onclick="toast('📦','p','STIX Export','Bundle generated — 1,409 IOCs exported')">Export STIX</button>
+      <button class="btn btn-ghost btn-h28" onclick="toast('📡','p','Feed','IOC feed import (mock)')">Import Feed</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <input class="input" style="flex:1;min-width:200px;" id="ioc-search" placeholder="Search IOC — IP, domain, hash, URL…">
+    <select class="select" style="width:130px;" id="ioc-tf">
+      <option value="all">All Types</option><option value="ip">IP Address</option>
+      <option value="domain">Domain</option><option value="hash">Hash</option>
+      <option value="url">URL</option><option value="email">Email</option>
+    </select>
+    <select class="select" style="width:110px;"><option>All Risk</option><option>High (&gt;70)</option><option>Medium</option><option>Low</option></select>
+  </div>
+  <div class="card" style="flex:1;">
+    <div class="card-head">
+      <div class="card-head-icon chi-p">🗂</div>
+      <div class="card-head-text"><div class="card-head-title">IOC Database</div></div>
+      <span class="badge b-p">1 409 total</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 70px 80px 80px 50px 60px;gap:0;padding:7px 14px;background:var(--s0);font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t4);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.05);">
+      <span>Indicator</span><span>Type</span><span>Source</span><span>Last Seen</span><span>Score</span><span></span>
+    </div>
+    <div id="ioc-list" class="panel-scroll" style="max-height:420px;"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ ATTACKER ══════════════════ -->
+<div class="view" id="view-attacker">
+  <div>
+    <div class="page-eyebrow">Intelligence</div>
+    <div class="page-title">Attacker Profiles</div>
+    <div class="page-sub">Behavioral fingerprints built from live honeypot sessions</div>
+  </div>
+  <div id="attacker-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"></div>
+</div>
+
+<!-- ══════════════════ SECURITY & GUARDRAILS ══════════════════ -->
+<div class="view" id="view-security">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Governance</div>
+      <div class="page-title">Security & Guardrails</div>
+      <div class="page-sub">Threat model · isolation guarantees · honeytoken policy · deployment gates</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <span class="badge b-em"><span class="b-dot"></span>ALL GATES GREEN</span>
+      <button class="btn btn-ghost btn-h28" onclick="toast('📋','p','Policy Export','Security policy bundle exported (STIX + internal)')">Export Policy</button>
+    </div>
+  </div>
+
+  <!-- Threat Model Summary -->
+  <div class="card accent-da">
+    <div class="card-head">
+      <div class="card-head-icon chi-da">⚔</div>
+      <div class="card-head-text">
+        <div class="card-head-title">Threat Model (STRIDE-aligned)</div>
+        <div class="card-head-sub">What we assume · what we protect · what we never do</div>
+      </div>
+    </div>
+    <div class="card-body" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
+      <div style="background:var(--s2);border:1px solid rgba(239,68,68,.2);border-radius:var(--r);padding:12px;">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--da);letter-spacing:1px;margin-bottom:6px;">ASSUME</div>
+        <ul style="margin:0;padding-left:16px;color:var(--t2);font-size:11px;line-height:1.7;">
+          <li>Attackers will find decoys</li>
+          <li>Some will pivot laterally</li>
+          <li>Credentials will be tested</li>
+          <li>C2 domains may be contacted</li>
+        </ul>
+      </div>
+      <div style="background:var(--s2);border:1px solid rgba(16,185,129,.2);border-radius:var(--r);padding:12px;">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--em);letter-spacing:1px;margin-bottom:6px;">PROTECT</div>
+        <ul style="margin:0;padding-left:16px;color:var(--t2);font-size:11px;line-height:1.7;">
+          <li>Production networks (hard isolation)</li>
+          <li>Real credentials & secrets</li>
+          <li>Operator identity (no leakage)</li>
+          <li>Forensic integrity of captures</li>
+        </ul>
+      </div>
+      <div style="background:var(--s2);border:1px solid rgba(245,158,11,.2);border-radius:var(--r);padding:12px;">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--am);letter-spacing:1px;margin-bottom:6px;">NEVER</div>
+        <ul style="margin:0;padding-left:16px;color:var(--t2);font-size:11px;line-height:1.7;">
+          <li>Use production credentials</li>
+          <li>Allow outbound to prod from decoy</li>
+          <li>Store real PII in lures</li>
+          <li>Disable audit for any action</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2" style="align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <!-- Isolation Guarantees -->
+      <div class="card accent-em">
+        <div class="card-head">
+          <div class="card-head-icon chi-em">🔒</div>
+          <div class="card-head-text">
+            <div class="card-head-title">Isolation Guarantees</div>
+            <div class="card-head-sub">Hard technical controls — not policy only</div>
+          </div>
+          <span class="badge b-em">ENFORCED</span>
+        </div>
+        <div class="card-body">
+          <div class="tgl-row">
+            <div class="tgl-text">
+              <div class="tgl-name">Network Air-Gap (no prod route)</div>
+              <div class="tgl-desc">Decoy VLANs have no route to production subnets. Verified by continuous probe.</div>
+            </div>
+            <label class="tgl"><input type="checkbox" checked disabled><div class="tgl-sl"></div></label>
+          </div>
+          <div class="tgl-row">
+            <div class="tgl-text">
+              <div class="tgl-name">Egress Deny-by-Default</div>
+              <div class="tgl-desc">Only allowlisted analysis/sinkhole destinations. All other outbound dropped + logged.</div>
+            </div>
+            <label class="tgl"><input type="checkbox" checked disabled><div class="tgl-sl"></div></label>
+          </div>
+          <div class="tgl-row">
+            <div class="tgl-text">
+              <div class="tgl-name">Namespace + cgroup isolation</div>
+              <div class="tgl-desc">Each honeypot in dedicated network + PID + mount namespace. Resource limits enforced.</div>
+            </div>
+            <label class="tgl"><input type="checkbox" checked disabled><div class="tgl-sl"></div></label>
+          </div>
+          <div class="tgl-row">
+            <div class="tgl-text">
+              <div class="tgl-name">No shared secrets with production</div>
+              <div class="tgl-desc">Honeytokens only. Production secrets never injected into decoy environment.</div>
+            </div>
+            <label class="tgl"><input type="checkbox" checked disabled><div class="tgl-sl"></div></label>
+          </div>
+          <div class="tgl-row">
+            <div class="tgl-text">
+              <div class="tgl-name">DNS Sinkhole mandatory for C2</div>
+              <div class="tgl-desc">Known C2 domains redirected to analysis node. Unknown domains logged + blocked.</div>
+            </div>
+            <label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Honeytoken Policy -->
+      <div class="card accent-am">
+        <div class="card-head">
+          <div class="card-head-icon chi-am">🏷</div>
+          <div class="card-head-text">
+            <div class="card-head-title">Honeytoken Policy</div>
+            <div class="card-head-sub">Business + security rules for lures</div>
+          </div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="padding:10px;background:var(--da-lo);border:1px solid rgba(239,68,68,.25);border-radius:var(--r);font-size:11px;color:var(--t2);">
+            <strong style="color:var(--da);">ZLATÉ PRAVIDLO:</strong> Žádný honeytoken nesmí být platný produkční credential. Všechny lures jsou syntetické a sledovatelné.
+          </div>
+          <div class="tgl-row">
+            <div class="tgl-text"><div class="tgl-name">Syntetické credentials only</div><div class="tgl-desc">Generované unikátní tokeny, nikdy reálné hesla/API klíče</div></div>
+            <label class="tgl"><input type="checkbox" checked disabled><div class="tgl-sl"></div></label>
+          </div>
+          <div class="tgl-row">
+            <div class="tgl-text"><div class="tgl-name">Canary uniqueness</div><div class="tgl-desc">Každý token má unikátní ID pro attribution</div></div>
+            <label class="tgl"><input type="checkbox" checked disabled><div class="tgl-sl"></div></label>
+          </div>
+          <div class="tgl-row">
+            <div class="tgl-text"><div class="tgl-name">No real PII in lures</div><div class="tgl-desc">Jména, e-maily, čísla karet jsou fake</div></div>
+            <label class="tgl"><input type="checkbox" checked disabled><div class="tgl-sl"></div></label>
+          </div>
+          <div class="tgl-row">
+            <div class="tgl-text"><div class="tgl-name">Auto-expire after 90 dní</div><div class="tgl-desc">Staré tokeny se rotují a invalidují</div></div>
+            <label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <!-- Deployment Gates -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-icon chi-p">🚦</div>
+          <div class="card-head-text">
+            <div class="card-head-title">Deployment Lifecycle Gates</div>
+            <div class="card-head-sub">Business logic — žádný deploy bez průchodu</div>
+          </div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+          <div id="deploy-gates">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+              <span class="badge b-em">1</span>
+              <div style="flex:1;"><div style="font-size:12px;font-weight:500;">Draft → Validate</div><div style="font-family:var(--mono);font-size:10px;color:var(--t3);">Schema, port conflict, isolation check</div></div>
+              <span class="badge b-em">PASS</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+              <span class="badge b-em">2</span>
+              <div style="flex:1;"><div style="font-size:12px;font-weight:500;">Security Gate</div><div style="font-family:var(--mono);font-size:10px;color:var(--t3);">No prod creds, honeytoken policy, RBAC</div></div>
+              <span class="badge b-em">PASS</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+              <span class="badge b-am">3</span>
+              <div style="flex:1;"><div style="font-size:12px;font-weight:500;">Approval (high-risk)</div><div style="font-family:var(--mono);font-size:10px;color:var(--t3);">RDP / SMB / AD decoys require dual control</div></div>
+              <span class="badge b-am">REQUIRED</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+              <span class="badge b-em">4</span>
+              <div style="flex:1;"><div style="font-size:12px;font-weight:500;">Deploy + Healthcheck</div><div style="font-family:var(--mono);font-size:10px;color:var(--t3);">Container start, probe, register in radar</div></div>
+              <span class="badge b-em">PASS</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;">
+              <span class="badge b-p">5</span>
+              <div style="flex:1;"><div style="font-size:12px;font-weight:500;">Monitor + Audit</div><div style="font-family:var(--mono);font-size:10px;color:var(--t3);">Continuous isolation probe + event stream</div></div>
+              <span class="badge b-p">LIVE</span>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-h34" style="width:100%;" onclick="runSecurityGate()">▶ Run Full Security Validation</button>
+        </div>
+      </div>
+
+      <!-- RBAC -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-icon chi-p">👥</div>
+          <div class="card-head-text">
+            <div class="card-head-title">RBAC Roles</div>
+            <div class="card-head-sub">Least privilege · dual control for high-risk</div>
+          </div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <div class="list-row" style="padding:8px 0;">
+            <span class="badge b-p">OPERATOR</span>
+            <span style="font-size:11px;color:var(--t2);flex:1;">Deploy low-risk decoys, view feeds, plant breadcrumbs</span>
+          </div>
+          <div class="list-row" style="padding:8px 0;">
+            <span class="badge b-am">ANALYST</span>
+            <span style="font-size:11px;color:var(--t2);flex:1;">Hunt, IOC, profiles, export STIX — no deploy</span>
+          </div>
+          <div class="list-row" style="padding:8px 0;">
+            <span class="badge b-da">ADMIN</span>
+            <span style="font-size:11px;color:var(--t2);flex:1;">Policies, isolation, high-risk decoys, API keys</span>
+          </div>
+          <div class="list-row" style="padding:8px 0;">
+            <span class="badge b-em">AUDITOR</span>
+            <span style="font-size:11px;color:var(--t2);flex:1;">Read-only audit log + compliance reports</span>
+          </div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:4px;">Current session: <span style="color:var(--p);">OPERATOR</span> · dual-control required for RDP/SMB/AD</div>
+        </div>
+      </div>
+
+      <!-- Business Metrics -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-icon chi-em">📊</div>
+          <div class="card-head-text">
+            <div class="card-head-title">Business Value (mock)</div>
+            <div class="card-head-sub">Deception ROI indicators</div>
+          </div>
+        </div>
+        <div class="card-body" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
+          <div style="background:var(--s2);border-radius:var(--r);padding:10px;text-align:center;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);">COVERAGE</div>
+            <div style="font-size:20px;font-weight:700;color:var(--em);">87%</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);">critical assets covered</div>
+          </div>
+          <div style="background:var(--s2);border-radius:var(--r);padding:10px;text-align:center;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);">MTTD</div>
+            <div style="font-size:20px;font-weight:700;color:var(--p);">4.2m</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);">mean time to detect</div>
+          </div>
+          <div style="background:var(--s2);border-radius:var(--r);padding:10px;text-align:center;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);">FALSE POS</div>
+            <div style="font-size:20px;font-weight:700;color:var(--em);">0</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);">honeypot FP rate</div>
+          </div>
+          <div style="background:var(--s2);border-radius:var(--r);padding:10px;text-align:center;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);">COST / MO</div>
+            <div style="font-size:20px;font-weight:700;color:var(--t1);">$1.2k</div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);">infra + license</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ AUDIT LOG ══════════════════ -->
+<div class="view" id="view-audit">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Governance</div>
+      <div class="page-title">Audit Log</div>
+      <div class="page-sub">Immutable record of operator actions · isolation probes · policy changes</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-muted btn-h28" onclick="toast('📦','p','Audit Export','Last 90 days exported (JSON + CSV)')">Export 90d</button>
+      <button class="btn btn-ghost btn-h28" onclick="toast('🔍','p','Integrity Check','Hash chain verified — no tampering detected')">Verify Integrity</button>
+    </div>
+  </div>
+
+  <div class="g4060" style="align-items:start;">
+    <div class="card" style="flex:1;">
+      <div class="card-head">
+        <div class="card-head-icon chi-p">📜</div>
+        <div class="card-head-text">
+          <div class="card-head-title">Event Stream</div>
+          <div class="card-head-sub">Append-only · signed · retained 365d</div>
+        </div>
+        <span class="badge b-p">LIVE</span>
+      </div>
+      <div class="feed panel-scroll" id="audit-feed" style="max-height:480px;"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-icon chi-em">✅</div>
+          <div class="card-head-text"><div class="card-head-title">Integrity Status</div></div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <div class="sys-row"><span class="sys-label">Hash chain</span><span class="sys-val" style="color:var(--em);">VALID</span></div>
+          <div class="sys-row"><span class="sys-label">Last probe</span><span class="sys-val">12s ago</span></div>
+          <div class="sys-row"><span class="sys-label">Events (24h)</span><span class="sys-val">147</span></div>
+          <div class="sys-row"><span class="sys-label">Retention</span><span class="sys-val">365 days</span></div>
+          <div class="sys-row"><span class="sys-label">Tamper attempts</span><span class="sys-val" style="color:var(--em);">0</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-icon chi-am">⚖</div>
+          <div class="card-head-text"><div class="card-head-title">Compliance Mapping</div></div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:6px;">
+          <div class="list-row" style="padding:6px 0;"><span class="badge b-em">ISO 27001</span><span style="font-size:11px;color:var(--t2);">A.12.4 — Logging</span></div>
+          <div class="list-row" style="padding:6px 0;"><span class="badge b-em">NIST</span><span style="font-size:11px;color:var(--t2);">AU-2, AU-6, AU-9</span></div>
+          <div class="list-row" style="padding:6px 0;"><span class="badge b-em">SOC 2</span><span style="font-size:11px;color:var(--t2);">CC7.2, CC7.3</span></div>
+          <div class="list-row" style="padding:6px 0;"><span class="badge b-p">GDPR</span><span style="font-size:11px;color:var(--t2);">No real PII in decoys</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ AI AGENT ══════════════════ -->
+<div class="view" id="view-aiagent">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Operations · LLM</div>
+      <div class="page-title">AI Cyber Agent</div>
+      <div class="page-sub">Mock LLM workflow — pouze syntetická data · žádný reálný shell / síťový přístup</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span class="badge b-am">MOCK MODE</span>
+      <span class="badge b-em">UNTRUSTED DATA ONLY</span>
+    </div>
+  </div>
+
+  <div style="padding:10px 14px;background:var(--da-lo);border:1px solid rgba(239,68,68,.3);border-radius:var(--r-lg);font-size:11px;color:var(--t2);">
+    <strong style="color:var(--da);">AI SECURITY:</strong> Veškerý vstup z honeypotů / ticketů / IOC je UNTRUSTED DATA. Agent nesmí spouštět shell, měnit infrastrukturu ani exportovat produkční secrets. Výstupy jsou návrhy pro operátora (human-in-the-loop).
+  </div>
+
+  <div class="g4060" style="align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-icon chi-p">🤖</div>
+          <div class="card-head-text"><div class="card-head-title">Workflow Templates</div><div class="card-head-sub">Vyber scénář — agent pracuje jen s mock daty</div></div>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <button class="btn btn-ghost btn-h34" style="width:100%;justify-content:flex-start;" onclick="runAIWorkflow('triage')">① Incident Triage — shrnout live feed + risk</button>
+          <button class="btn btn-ghost btn-h34" style="width:100%;justify-content:flex-start;" onclick="runAIWorkflow('ioc')">② IOC Correlation — propojit IP / hash / domain</button>
+          <button class="btn btn-ghost btn-h34" style="width:100%;justify-content:flex-start;" onclick="runAIWorkflow('ticket')">③ Ticket Draft — návrh ticketu z události</button>
+          <button class="btn btn-ghost btn-h34" style="width:100%;justify-content:flex-start;" onclick="runAIWorkflow('report')">④ Executive Summary — report za 24h</button>
+          <button class="btn btn-ghost btn-h34" style="width:100%;justify-content:flex-start;" onclick="runAIWorkflow('contain')">⑤ Containment Advice — doporučení (bez exec)</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-am">🛡</div><div class="card-head-text"><div class="card-head-title">Guardrails (enforced in mock)</div></div></div>
+        <div class="card-body" style="font-family:var(--mono);font-size:10px;color:var(--t3);line-height:1.8;">
+          • no_tool_use: shell, deploy, firewall change<br>
+          • no_prod_data: pouze honeypot / synthetic IOC<br>
+          • human_approve: každý návrh vyžaduje potvrzení<br>
+          • prompt_injection: systémový prompt oddělený od user data<br>
+          • output_sanitized: žádné raw credentials v odpovědi
+        </div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;min-height:420px;">
+      <div class="card-head">
+        <div class="card-head-icon chi-p">💬</div>
+        <div class="card-head-text"><div class="card-head-title">Agent Console</div><div class="card-head-sub">Mock reasoning stream</div></div>
+        <span class="badge b-p" id="ai-status">IDLE</span>
+      </div>
+      <div class="term" style="flex:1;border:none;border-radius:0;">
+        <div class="term-head"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span class="term-fn">agent-session.mock</span></div>
+        <div class="term-body" id="ai-console" style="min-height:280px;max-height:360px;overflow-y:auto;">
+<span class="cm"># RabbitHollow AI Agent — mock mode</span>
+<span class="cm"># Data source: synthetic honeypot events only</span>
+<span class="pr">▌</span><span class="cursor"></span>
+        </div>
+      </div>
+      <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,.05);display:flex;gap:8px;">
+        <input class="input" id="ai-prompt" placeholder="Volitelný kontext pro agenta (mock)…" style="flex:1;">
+        <button class="btn btn-primary btn-h34" onclick="runAIWorkflow('custom')">Run</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ REPORTS ══════════════════ -->
+<div class="view" id="view-reports">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Operations</div>
+      <div class="page-title">Auto Reports &amp; AI Training Data</div>
+      <div class="page-sub">Generování reportů · výběr datasetů pro učení modelu (opt-in)</div>
+    </div>
+    <button class="btn btn-primary btn-h28" onclick="generateReport()">▶ Generate Report</button>
+  </div>
+
+  <div class="g2" style="align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-p">📄</div><div class="card-head-text"><div class="card-head-title">Report Builder</div></div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+          <div class="fg"><label class="label">Report Type</label>
+            <select class="select" id="rpt-type">
+              <option>Daily Threat Summary</option>
+              <option>Weekly Executive Brief</option>
+              <option>Incident Deep-Dive</option>
+              <option>Honeypot Coverage Report</option>
+              <option>Compliance Evidence Pack</option>
+            </select>
+          </div>
+          <div class="fg"><label class="label">Time Range</label>
+            <select class="select" id="rpt-range"><option>Last 24h</option><option>Last 7d</option><option>Last 30d</option></select>
+          </div>
+          <div class="section-label">Include Sections</div>
+          <div class="chip-group" id="rpt-sections">
+            <div class="chip on" onclick="this.classList.toggle('on')">Live Events</div>
+            <div class="chip on" onclick="this.classList.toggle('on')">Top IPs</div>
+            <div class="chip on" onclick="this.classList.toggle('on')">IOC Summary</div>
+            <div class="chip" onclick="this.classList.toggle('on')">MITRE Coverage</div>
+            <div class="chip" onclick="this.classList.toggle('on')">Ticket Stats</div>
+            <div class="chip" onclick="this.classList.toggle('on')">Asset Risk</div>
+          </div>
+        </div>
+      </div>
+      <div class="card accent-am">
+        <div class="card-head"><div class="card-head-icon chi-am">🧠</div><div class="card-head-text"><div class="card-head-title">AI Training Data (opt-in)</div><div class="card-head-sub">Uživatel explicitně vybírá, co se smí uložit pro fine-tune</div></div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="padding:8px;background:var(--am-lo);border:1px solid rgba(245,158,11,.25);border-radius:var(--r);font-size:10px;color:var(--t2);">
+            Default: NIC se neukládá. Pouze anonymizované / synthetic eventy po explicitním zaškrtnutí. Žádné produkční logy, žádné reálné PII.
+          </div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Anonymized attack patterns</div><div class="tgl-desc">IP → /24, timestamps bucketed</div></div><label class="tgl"><input type="checkbox" id="ai-data-patterns"><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Sigma rule outcomes</div><div class="tgl-desc">True/false positive labels (no payloads)</div></div><label class="tgl"><input type="checkbox" id="ai-data-sigma"><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Ticket resolution notes</div><div class="tgl-desc">Redacted analyst notes only</div></div><label class="tgl"><input type="checkbox" id="ai-data-tickets"><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Honeypot interaction sequences</div><div class="tgl-desc">Command sequences bez credentials</div></div><label class="tgl"><input type="checkbox" id="ai-data-hp"><div class="tgl-sl"></div></label></div>
+          <button class="btn btn-muted btn-h28" style="width:100%;" onclick="saveAITrainingSelection()">Save Training Preferences</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-em">📋</div><div class="card-head-text"><div class="card-head-title">Generated Reports</div></div><span class="badge b-p" id="rpt-count">0</span></div>
+        <div id="rpt-list" class="panel-scroll" style="max-height:200px;">
+          <div style="padding:20px;text-align:center;color:var(--t4);font-family:var(--mono);font-size:11px;">No reports yet — generate one</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-p">👁</div><div class="card-head-text"><div class="card-head-title">Report Preview</div></div></div>
+        <div class="term">
+          <div class="term-head"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span class="term-fn">report-preview.md</span></div>
+          <div class="term-body" id="rpt-preview" style="min-height:180px;max-height:260px;overflow-y:auto;font-size:10px;">
+<span class="cm"># Select options and click Generate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ IP TRACKER ══════════════════ -->
+<div class="view" id="view-iptrack">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Operations</div>
+      <div class="page-title">IP Activity Tracker</div>
+      <div class="page-sub">Stopování činnosti podle IP · timeline · correlation s honeypoty a tickety</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input class="input" id="ip-search" placeholder="Filter IP…" style="width:180px;" oninput="filterIPTrack()">
+      <button class="btn btn-danger btn-h28" onclick="toast('🚫','em','Bulk Block','Selected IPs queued for firewall (mock)')">Block Selected</button>
+    </div>
+  </div>
+  <div class="g4060" style="align-items:start;">
+    <div class="card" style="flex:1;">
+      <div class="card-head"><div class="card-head-icon chi-da">⏱</div><div class="card-head-text"><div class="card-head-title">IP Activity Table</div></div></div>
+      <div style="display:grid;grid-template-columns:140px 70px 80px 70px 90px 1fr 70px;gap:0;padding:7px 14px;background:var(--s0);font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1px;color:var(--t4);text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.05);">
+        <span>IP</span><span>Hits</span><span>First</span><span>Last</span><span>Risk</span><span>Targets</span><span></span>
+      </div>
+      <div id="ip-track-list" class="panel-scroll" style="max-height:400px;"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-head-icon chi-p">📍</div><div class="card-head-text"><div class="card-head-title">Timeline</div><div class="card-head-sub" id="ip-tl-title">Select an IP</div></div></div>
+      <div class="feed panel-scroll" id="ip-timeline" style="max-height:400px;">
+        <div style="padding:24px;text-align:center;color:var(--t4);font-family:var(--mono);font-size:11px;">Click an IP to load activity timeline</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ ASSETS ══════════════════ -->
+<div class="view" id="view-assets">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Operations</div>
+      <div class="page-title">Asset &amp; Device Management</div>
+      <div class="page-sub">Inventář zařízení · technická dokumentace · servisní informace (mock CMDB)</div>
+    </div>
+    <button class="btn btn-primary btn-h28" onclick="toast('➕','p','Asset','New asset form (mock)')">+ Add Asset</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:4px;">
+    <input class="input" id="asset-search" placeholder="Search hostname, IP, owner…" style="flex:1;" oninput="renderAssets()">
+    <select class="select" style="width:140px;" id="asset-type-f" onchange="renderAssets()">
+      <option value="all">All Types</option>
+      <option value="server">Server</option>
+      <option value="network">Network</option>
+      <option value="endpoint">Endpoint</option>
+      <option value="ot">OT / ICS</option>
+    </select>
+  </div>
+  <div class="g4060" style="align-items:start;">
+    <div class="card" style="flex:1;">
+      <div class="card-head"><div class="card-head-icon chi-p">🖥</div><div class="card-head-text"><div class="card-head-title">Device Inventory</div></div><span class="badge b-p">42 assets</span></div>
+      <div id="asset-list" class="panel-scroll" style="max-height:420px;"></div>
+    </div>
+    <div class="card" id="asset-detail">
+      <div class="card-head"><div class="card-head-icon chi-em">📎</div><div class="card-head-text"><div class="card-head-title">Asset Detail</div><div class="card-head-sub" id="asset-detail-sub">Select a device</div></div></div>
+      <div class="card-body" id="asset-detail-body" style="color:var(--t3);font-size:11px;">
+        Vyber zařízení pro technickou dokumentaci a servisní info.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ TICKETS ══════════════════ -->
+<div class="view" id="view-tickets">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="page-eyebrow">Operations</div>
+      <div class="page-title">Security Ticketing</div>
+      <div class="page-sub">Incident tickets · workspace pro řešení · vazba na IP / assets / honeypoty</div>
+    </div>
+    <button class="btn btn-primary btn-h28" onclick="createTicket()">+ New Ticket</button>
+  </div>
+  <div class="g4060" style="align-items:start;">
+    <div class="card" style="flex:1;">
+      <div class="card-head">
+        <div class="card-head-icon chi-da">🎫</div>
+        <div class="card-head-text"><div class="card-head-title">Open Queue</div></div>
+        <div class="chip-group">
+          <div class="chip on" onclick="filterTickets('all',this)">All</div>
+          <div class="chip" onclick="filterTickets('open',this)">Open</div>
+          <div class="chip" onclick="filterTickets('progress',this)">In Progress</div>
+          <div class="chip" onclick="filterTickets('resolved',this)">Resolved</div>
+        </div>
+      </div>
+      <div id="ticket-list" class="panel-scroll" style="max-height:280px;"></div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;min-height:480px;">
+      <div class="card-head">
+        <div class="card-head-icon chi-p">🛠</div>
+        <div class="card-head-text"><div class="card-head-title">Ticket Workspace</div><div class="card-head-sub" id="tw-sub">Select a ticket to investigate</div></div>
+        <span class="badge b-mu" id="tw-status">—</span>
+      </div>
+      <div class="card-body" id="tw-body" style="flex:1;display:flex;flex-direction:column;gap:12px;">
+        <div style="padding:32px;text-align:center;color:var(--t4);font-family:var(--mono);font-size:11px;">No ticket selected</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════ SETTINGS ══════════════════ -->
+<div class="view" id="view-settings">
+  <div>
+    <div class="page-eyebrow">System</div>
+    <div class="page-title">Settings</div>
+    <div class="page-sub">Platform configuration, integrations and license</div>
+  </div>
+  <div class="g2" style="align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-p">🔔</div><div class="card-head-text"><div class="card-head-title">Alerting</div></div></div>
+        <div class="card-body">
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Slack Webhook</div><div class="tgl-desc">Push critical alerts to Slack channel</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Email Digest</div><div class="tgl-desc">Daily threat summary at 08:00 UTC</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">SIEM Integration</div><div class="tgl-desc">Splunk / Elastic / Sentinel export</div></div><label class="tgl"><input type="checkbox"><div class="tgl-sl"></div></label></div>
+          <div class="fg" style="margin-top:10px;"><label class="label">Webhook URL</label><input class="input" value="https://hooks.slack.com/services/..."></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-am">📡</div><div class="card-head-text"><div class="card-head-title">Threat Intel Feeds</div></div></div>
+        <div class="card-body">
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">AbuseIPDB</div><div class="tgl-desc">IP reputation enrichment</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">VirusTotal</div><div class="tgl-desc">Hash & URL reputation</div></div><label class="tgl"><input type="checkbox" checked><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">Shodan</div><div class="tgl-desc">Attacker IP enrichment</div></div><label class="tgl"><input type="checkbox"><div class="tgl-sl"></div></label></div>
+          <div class="tgl-row"><div class="tgl-text"><div class="tgl-name">MISP Community Feed</div><div class="tgl-desc">Shared threat intelligence</div></div><label class="tgl"><input type="checkbox"><div class="tgl-sl"></div></label></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-p">🔑</div><div class="card-head-text"><div class="card-head-title">API Keys</div></div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+          <div class="fg"><label class="label">AbuseIPDB API Key</label><input class="input" type="password" value="abcdef1234567890"></div>
+          <div class="fg"><label class="label">VirusTotal API Key</label><input class="input" type="password" value="abcdef1234567890"></div>
+          <div class="fg"><label class="label">Shodan API Key</label><input class="input" placeholder="Enter API key…"></div>
+          <button class="btn btn-primary btn-h34" style="width:100%;" onclick="toast('✅','em','Saved','API keys updated successfully')">Save Keys</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-icon chi-em">🐇</div><div class="card-head-text"><div class="card-head-title">License</div></div><span class="badge b-p">ENTERPRISE</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <div class="sys-row"><span class="sys-label">Tier</span><span class="sys-val">Enterprise Unlimited</span></div>
+          <div class="sys-row"><span class="sys-label">Max Honeypots</span><span class="sys-val" style="color:var(--em);">Unlimited</span></div>
+          <div class="sys-row"><span class="sys-label">Valid Until</span><span class="sys-val" style="color:var(--em);">2027-08-26</span></div>
+          <div class="sys-row"><span class="sys-label">Support</span><span class="sys-val">Priority 24/7</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<div id="toasts"></div>
+
+<script>
+/* ═══════════ NAV ═══════════ */
+function goTo(viewId) {
+  navShow(viewId);
+  // sync sidebar
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.getAttribute('data-view') === viewId);
+  });
+  // sync rail by data-tip / onclick match
+  document.querySelectorAll('.rail-btn').forEach(b => {
+    const oc = b.getAttribute('onclick') || '';
+    b.classList.toggle('active', oc.includes("'" + viewId + "'") || oc.includes('"'+viewId+'"'));
+  });
+}
+function nav(railBtn, viewId) {
+  goTo(viewId);
+}
+function navSide(sideEl, viewId) {
+  goTo(viewId);
+}
+function navShow(viewId) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const v = document.getElementById('view-'+viewId);
+  if (v) { v.classList.add('active'); const m=document.getElementById('main'); if(m) m.scrollTop=0; }
+  const labels = {overview:'Dashboard',honeypot:'Honeypot Builder',honeynet:'Honeynet Designer',breadcrumb:'Breadcrumb Trails',threathunt:'Threat Hunting',ioc:'IOC Intelligence',attacker:'Attacker Profiles',aiagent:'AI Cyber Agent',reports:'Auto Reports',iptrack:'IP Activity Tracker',assets:'Asset Management',tickets:'Security Tickets',security:'Security & Guardrails',audit:'Audit Log',settings:'Settings'};
+  const tb=document.getElementById('tb-section'); if(tb) tb.textContent = labels[viewId]||viewId;
+  try {
+    if(viewId==='honeypot') { updatePreview(); renderHpList(); }
+    if(viewId==='honeynet')  setTimeout(drawNet,80);
+    if(viewId==='threathunt'){ renderSigma(); renderMitreFull(); }
+    if(viewId==='ioc')       renderIOC(iocData);
+    if(viewId==='attacker')  renderAttackers();
+    if(viewId==='audit')     renderAudit();
+    if(viewId==='iptrack')   renderIPTrack();
+    if(viewId==='assets')    renderAssets();
+    if(viewId==='tickets')   renderTickets();
+    if(viewId==='reports')   renderReportList();
+  } catch(e) { console.error('navShow render', viewId, e); }
+}
+// wire data-view on nav items (order matches sidebar)
+document.querySelectorAll('.nav-item').forEach((el,i)=>{
+  const views=['overview','honeypot','honeynet','breadcrumb','threathunt','ioc','attacker','aiagent','reports','iptrack','assets','tickets','security','audit','settings'];
+  if(views[i]) el.setAttribute('data-view',views[i]);
+});
+
+/* ═══════════ CLOCK / UPTIME ═══════════ */
+const t0=Date.now();
+function pad(n){return String(n).padStart(2,'0');}
+setInterval(()=>{
+  const n=new Date();
+  document.getElementById('clock').textContent=`${pad(n.getUTCHours())}:${pad(n.getUTCMinutes())}:${pad(n.getUTCSeconds())} UTC`;
+  const e=Math.floor((Date.now()-t0)/1000);
+  const ts=`${pad(Math.floor(e/3600))}:${pad(Math.floor((e%3600)/60))}:${pad(e%60)}`;
+  const u=document.getElementById('uptime-val'); if(u) u.textContent=ts;
+  const s=document.getElementById('sess-ts'); if(s) s.textContent=ts;
+},1000);
+
+/* ═══════════ TOAST ═══════════ */
+function toast(icon,cls,title,body){
+  const c=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className=`toast ${cls}`;
+  t.innerHTML=`<div class="toast-icon">${icon}</div><div><div class="toast-title">${title}</div><div class="toast-body">${body}</div></div>`;
+  c.appendChild(t);
+  setTimeout(()=>{t.style.cssText='opacity:0;transform:translateX(16px);transition:all .3s';setTimeout(()=>t.remove(),300);},4000);
+}
+
+/* ═══════════ COUNTUP ═══════════ */
+document.querySelectorAll('[data-countup]').forEach(el=>{
+  const target=parseInt(el.dataset.countup);
+  const dur=1200, steps=40, step=dur/steps;
+  let cur=0, i=0;
+  const id=setInterval(()=>{
+    i++; cur=Math.round(target*(i/steps));
+    el.textContent=cur.toLocaleString('cs');
+    if(i>=steps){el.textContent=target.toLocaleString('cs');clearInterval(id);}
+  },step);
+});
+
+/* ═══════════ SPARKLINES ═══════════ */
+function drawSpark(id,data,color){
+  const c=document.getElementById(id); if(!c)return;
+  c.width=c.offsetWidth||80; c.height=28;
+  const ctx=c.getContext('2d'), w=c.width, h=c.height;
+  const mn=Math.min(...data), mx=Math.max(...data);
+  const grd=ctx.createLinearGradient(0,0,0,h);
+  grd.addColorStop(0,color+'44'); grd.addColorStop(1,color+'00');
+  ctx.beginPath();
+  data.forEach((v,i)=>{
+    const x=(i/(data.length-1))*w;
+    const y=h-(((v-mn)/(mx-mn||1))*(h-4)+2);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  const pathCopy=new Path2D(ctx.currentPath);
+  ctx.strokeStyle=color; ctx.lineWidth=1.5;
+  ctx.stroke();
+  ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+  ctx.fillStyle=grd; ctx.fill();
+}
+setTimeout(()=>{
+  drawSpark('spark-hp', [8,9,10,10,11,12,13,14],'#7C3AED');
+  drawSpark('spark-int',[180,192,200,210,215,220,235,247],'#EF4444');
+  drawSpark('spark-ips',[60,65,68,71,74,77,80,83],'#F59E0B');
+  drawSpark('spark-ioc',[1100,1180,1240,1290,1330,1370,1395,1409],'#10B981');
+},200);
+
+/* ═══════════ RISK ARC ═══════════ */
+setTimeout(()=>{
+  const arc=document.getElementById('risk-arc');
+  const txt=document.getElementById('risk-txt');
+  if(!arc||!txt) return;
+  const total=188.5, score=74, pct=score/100;
+  let cur=0;
+  const id=setInterval(()=>{
+    cur=Math.min(cur+2,score);
+    arc.style.strokeDashoffset=total-(total*cur/100);
+    txt.textContent=cur;
+    if(cur>=score) clearInterval(id);
+  },18);
+},400);
+
+/* ═══════════ LIVE FEED ═══════════ */
+const feedEvts=[
+  {c:'da',title:'SSH Brute Force Detected',meta:['TGT: HNY-SSH-01','SRC: 185.220.101.45 / RU','347 attempts'],time:'00:01'},
+  {c:'am',title:'New session — MySQL honeypot',meta:['10.0.0.88:3306','auth: admin / admin123'],time:'00:03'},
+  {c:'p', title:'Breadcrumb activated — .env lure',meta:['File read: /home/admin/.env','IP: 45.142.212.100'],time:'00:05'},
+  {c:'da',title:'Port scan (SYN flood)',meta:['SRC: 45.142.212.100','4,200 ports/min'],time:'00:07'},
+  {c:'am',title:'Canarytoken triggered',meta:['Token: HTTP-CANARY-001','URL /api/admin/export'],time:'00:09'},
+  {c:'em',title:'Session recording saved',meta:['SSH session 18min','3.4 MB captured'],time:'00:12'},
+  {c:'p', title:'MISP IOC synced',meta:['domain: c2-payload-drop.ru','confidence: 92%'],time:'00:14'},
+  {c:'da',title:'Lateral movement attempt',meta:['Pivot: 10.10.0.1 → 10.10.0.50'],time:'00:16'},
+];
+const feedEl=document.getElementById('event-feed');
+feedEvts.forEach(e=>{
+  const d=document.createElement('div'); d.className='feed-item';
+  d.innerHTML=`<div class="fi-dot ${e.c}"></div>
+    <div><div class="fi-title">${e.title}</div><div class="fi-meta">${e.meta.map(m=>`<span>${m}</span>`).join('')}</div></div>
+    <div class="fi-time">${e.time}</div>`;
+  feedEl.appendChild(d);
+});
+const livePool=[
+  {c:'da',title:'SQL injection on DB decoy',meta:['SELECT * FROM users WHERE 1=1 --']},
+  {c:'am',title:'FTP anon login attempt',meta:['ftp-hny-02 · 78.31.67.141']},
+  {c:'p', title:'DNS canary fired',meta:['token.dns.rabbithollow.io queried']},
+  {c:'em',title:'GeoIP resolved',meta:['185.220.101.45 → Tor Exit Node / DE']},
+  {c:'da',title:'Credential dump attempt',meta:['mysqldump --all-databases']},
+];
+setInterval(()=>{
+  const e=livePool[Math.floor(Math.random()*livePool.length)];
+  const n=new Date();
+  const ts=`${pad(n.getUTCHours())}:${pad(n.getUTCMinutes())}`;
+  const d=document.createElement('div'); d.className='feed-item';
+  d.style.background='rgba(124,58,237,.05)';
+  d.innerHTML=`<div class="fi-dot ${e.c}"></div>
+    <div><div class="fi-title">${e.title}</div><div class="fi-meta">${e.meta.map(m=>`<span>${m}</span>`).join('')}</div></div>
+    <div class="fi-time">${ts}</div>`;
+  feedEl.insertBefore(d,feedEl.firstChild);
+  setTimeout(()=>d.style.background='',2500);
+  if(feedEl.children.length>30) feedEl.lastChild.remove();
+},7000);
+
+/* ═══════════ IP TABLE ═══════════ */
+const ips=[
+  {ip:'185.220.101.45',origin:'🇩🇪 DE / Tor',hits:347,risk:'CRITICAL',rc:'b-da'},
+  {ip:'45.142.212.100', origin:'🇷🇺 RU',      hits:214,risk:'HIGH',    rc:'b-da'},
+  {ip:'104.21.88.12',  origin:'🇨🇳 CN',       hits:156,risk:'HIGH',    rc:'b-da'},
+  {ip:'23.129.64.131', origin:'🇺🇸 US/VPN',   hits:89, risk:'MEDIUM',  rc:'b-am'},
+  {ip:'78.31.67.141',  origin:'🇳🇱 NL',       hits:67, risk:'MEDIUM',  rc:'b-am'},
+];
+const tb=document.getElementById('ip-tbody');
+ips.forEach(r=>{
+  tb.innerHTML+=`<tr class="clickable">
+    <td class="mono-cell t1-cell">${r.ip}</td>
+    <td>${r.origin}</td>
+    <td class="mono-cell">${r.hits}</td>
+    <td><span class="badge ${r.rc}">${r.risk}</span></td>
+    <td><button class="btn btn-danger btn-h24" onclick="toast('🚫','em','IP Blocked','${r.ip} added to firewall blocklist')">Block</button></td>
+  </tr>`;
+});
+
+/* ═══════════ MITRE MINI ═══════════ */
+const tactics=[
+  {t:'Initial Access',h:7},{t:'Execution',h:4},{t:'Persistence',h:2},
+  {t:'Priv. Esc.',h:8},{t:'Defense Eva.',h:5},{t:'Lateral Move.',h:9},
+];
+const mm=document.getElementById('mitre-mini');
+tactics.forEach(t=>{
+  const c=t.h>6?'var(--da)':t.h>3?'var(--am)':'var(--p)';
+  mm.innerHTML+=`<div style="background:${c}18;border:1px solid ${c}44;border-radius:5px;padding:7px 6px;text-align:center;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='${c}'" onmouseout="this.style.borderColor='${c}44'">
+    <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:${c};">${t.h}</div>
+    <div style="font-size:9px;color:var(--t3);margin-top:2px;line-height:1.3;">${t.t}</div>
+  </div>`;
+});
+
+/* ═══════════ NODE QUICK STATUS ═══════════ */
+const nodes=[
+  {n:'HNY-SSH-01',p:22,h:347,ok:true},{n:'HNY-FTP-01',p:21,h:89,ok:true},
+  {n:'PROD-DB-01',p:3306,h:214,ok:true},{n:'HNY-HTTP-01',p:80,h:156,ok:true},
+  {n:'HNY-RDP-01',p:3389,h:44,ok:false},{n:'HNY-SMB-01',p:445,h:122,ok:true},
+];
+const nq=document.getElementById('node-quick');
+nodes.forEach(n=>{
+  nq.innerHTML+=`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.03);">
+    <div class="live-dot ${n.ok?'on':'off'}"></div>
+    <span style="font-family:var(--mono);font-size:10px;color:var(--t1);flex:1;">${n.n}</span>
+    <span style="font-family:var(--mono);font-size:9px;color:var(--t3);">:${n.p}</span>
+    <span style="font-family:var(--mono);font-size:10px;color:${n.ok?'var(--em)':'var(--da)'};">${n.h} hits</span>
+  </div>`;
+});
+
+/* ═══════════ HP LIST ═══════════ */
+const hpData=[
+  {p:22,s:'SSH',h:347,banner:'OpenSSH_8.9p1',ok:true},
+  {p:21,s:'FTP',h:89, banner:'vsftpd 3.0.5',ok:true},
+  {p:3306,s:'MySQL',h:214,banner:'MySQL 5.7.38',ok:true},
+  {p:80,s:'HTTP',h:156,banner:'Apache/2.4.54',ok:true},
+  {p:3389,s:'RDP',h:44, banner:'MS-RDPBCGR',ok:false},
+  {p:445,s:'SMB',h:122,banner:'Samba 4.17',ok:true},
+  {p:25,s:'SMTP',h:67, banner:'Postfix 3.7',ok:true},
+  {p:8080,s:'HTTPS',h:38,banner:'nginx/1.22.0',ok:true},
+];
+function renderHpList(){
+  const el=document.getElementById('hp-list'); if(!el)return;
+  el.innerHTML='';
+  hpData.forEach(h=>{
+    el.innerHTML+=`<div class="port-grid">
+      <span class="port-num">:${h.p}</span>
+      <span style="color:var(--t1);font-weight:500;">${h.s}</span>
+      <span style="color:var(--t2);">${h.h}</span>
+      <span style="color:var(--t3);font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${h.banner}</span>
+      <span style="display:flex;align-items:center;gap:5px;"><div class="live-dot ${h.ok?'on':'off'}"></div><span style="color:${h.ok?'var(--em)':'var(--da)'};">${h.ok?'LIVE':'DOWN'}</span></span>
+    </div>`;
+  });
+}
+
+/* ═══════════ HP PREVIEW ═══════════ */
+function updatePreview(){
+  const n=document.getElementById('hp-name')?.value||'';
+  const ip=document.getElementById('hp-ip')?.value||'';
+  const port=document.getElementById('hp-port')?.value||'';
+  const banner=document.getElementById('hp-banner')?.value||'';
+  const el=document.getElementById('hp-preview'); if(!el)return;
+  el.innerHTML=`<span class="cm"># RabbitHollow — Honeypot Node Config</span>
+<span class="kw">honeypot</span>:
+  <span class="kw">name</span>:    <span class="st">"${n}"</span>
+  <span class="kw">type</span>:    <span class="st">"mysql"</span>
+  <span class="kw">bind</span>:    <span class="ip">${ip}</span>:<span class="nm">${port}</span>
+  <span class="kw">banner</span>:  <span class="st">"${banner}"</span>
+  <span class="kw">record</span>:  <span class="nm">true</span>
+  <span class="kw">geo_enrich</span>: <span class="nm">true</span>
+  <span class="kw">canary</span>:  <span class="nm">true</span>
+  <span class="kw">fingerprint</span>: <span class="nm">true</span>
+  <span class="kw">webhook</span>: <span class="st">"https://hooks.rabbithollow.io/v1/alert"</span>
+<span class="pr">▌</span><span class="cursor"></span>`;
+}
+function deployHP(){
+  updatePreview();
+  const n=document.getElementById('hp-name')?.value||'node';
+  const ip=document.getElementById('hp-ip')?.value||'?';
+  const port=document.getElementById('hp-port')?.value||'?';
+  const type=document.getElementById('hp-type')?.value||'';
+  // Security gate: high-risk services require dual control
+  const highRisk = /RDP|SMB|Kubernetes|Industrial/i.test(type);
+  if(highRisk){
+    toast('⚠','am','Approval Required',`${type} is high-risk. Dual-control approval needed before deploy.`);
+    auditEvent('da','Deploy blocked — dual control','OPERATOR attempted high-risk deploy without second approver');
+    return;
+  }
+  // Business logic: validate isolation + honeytoken policy (mock)
+  toast('🔍','p','Security Gate','Validating isolation, schema, honeytoken policy…');
+  setTimeout(()=>{
+    toast('✅','em','Gate Passed','Isolation OK · no prod secrets · schema valid');
+    setTimeout(()=>{
+      toast('🚀','p','Deploying Node',`${n} spinning up on ${ip}:${port}`);
+      auditEvent('em','Node deployed',`${n} (${type}) on ${ip}:${port} by OPERATOR`);
+    },800);
+  },1200);
+}
+
+function runSecurityGate(){
+  toast('🔍','p','Full Validation','Running isolation probes + policy checks…');
+  setTimeout(()=>{
+    toast('✅','em','All Gates Green','Air-gap verified · honeytoken policy OK · RBAC consistent · audit chain valid');
+    auditEvent('em','Security validation run','Full gate suite passed by OPERATOR');
+  },1500);
+}
+
+function auditEvent(cls,title,meta){
+  const el=document.getElementById('audit-feed');
+  if(!el) return;
+  const n=new Date();
+  const ts=`${pad(n.getUTCHours())}:${pad(n.getUTCMinutes())}:${pad(n.getUTCSeconds())}`;
+  const d=document.createElement('div'); d.className='feed-item';
+  d.style.background='rgba(124,58,237,.05)';
+  d.innerHTML=`<div class="fi-dot ${cls}"></div>
+    <div><div class="fi-title">${title}</div><div class="fi-meta"><span>${meta}</span><span>actor: OPERATOR</span></div></div>
+    <div class="fi-time">${ts}</div>`;
+  el.insertBefore(d,el.firstChild);
+  setTimeout(()=>d.style.background='',2000);
+}
+
+function renderAudit(){
+  const el=document.getElementById('audit-feed'); if(!el||el.children.length) return;
+  const events=[
+    {c:'em',title:'Isolation probe OK',meta:['No route to 10.0.0.0/8 production','latency 0.4ms'],time:'15:12:01'},
+    {c:'p',title:'Honeytoken rotated',meta:['token-api-007 expired','new canary issued'],time:'14:58:22'},
+    {c:'em',title:'Node deployed',meta:['PROD-DB-FAKE-01 MySQL :3306','actor: OPERATOR'],time:'14:44:10'},
+    {c:'am',title:'Dual-control requested',meta:['RDP decoy pending','approver: ADMIN'],time:'14:30:05'},
+    {c:'da',title:'Deploy blocked',meta:['SMB high-risk without approval','actor: OPERATOR'],time:'14:29:41'},
+    {c:'em',title:'Policy change',meta:['DNS sinkhole enabled','actor: ADMIN'],time:'13:11:00'},
+    {c:'p',title:'API key updated',meta:['AbuseIPDB key rotated','actor: ADMIN'],time:'12:02:33'},
+    {c:'em',title:'Audit integrity check',meta:['Hash chain valid','0 tamper events'],time:'11:00:00'},
+    {c:'sk',title:'Session login',meta:['OPERATOR from 10.1.1.50','MFA OK'],time:'08:01:12'},
+    {c:'em',title:'Egress deny fired',meta:['Decoy attempted 8.8.8.8','dropped + logged'],time:'07:45:19'},
+  ];
+  events.forEach(e=>{
+    const d=document.createElement('div'); d.className='feed-item';
+    d.innerHTML=`<div class="fi-dot ${e.c}"></div>
+      <div><div class="fi-title">${e.title}</div><div class="fi-meta">${e.meta.map(m=>`<span>${m}</span>`).join('')}</div></div>
+      <div class="fi-time">${e.time}</div>`;
+    el.appendChild(d);
+  });
+}
+
+/* ═══════════ HONEYNET CANVAS ═══════════ */
+/* ═══ HONEYNET ANIMATED CANVAS ═══════════════════════════════════════════ */
+(function(){
+  let _raf = null;
+  let _pkts = [];
+  const NET_H = 420; // fixed height — works even when view was hidden
+
+  const NODES = [
+    {x:.50,y:.10,c:'#EF4444',r:22,ico:'☠',lbl:['Internet','Attacker']},
+    {x:.50,y:.33,c:'#7C3AED',r:19,ico:'🛡',lbl:['Firewall','Decoy']},
+    {x:.18,y:.60,c:'#F59E0B',r:16,ico:'🖥',lbl:['SSH','Honeypot']},
+    {x:.50,y:.60,c:'#F59E0B',r:16,ico:'🗄',lbl:['MySQL','Honeypot']},
+    {x:.82,y:.60,c:'#F59E0B',r:16,ico:'🌐',lbl:['HTTP','Honeypot']},
+    {x:.33,y:.87,c:'#38BDF8',r:15,ico:'📁',lbl:['Fake AD','Server']},
+    {x:.67,y:.87,c:'#10B981',r:15,ico:'🍞',lbl:['Bread-','crumb']},
+  ];
+  const EDGES = [[0,1],[1,2],[1,3],[1,4],[2,5],[3,5],[3,6],[4,6]];
+
+  function initCanvas(cv) {
+    // Always size by clientWidth + fixed height so hidden view isn't 0px
+    const W = cv.parentElement.clientWidth || 600;
+    if (cv.width !== W || cv.height !== NET_H) {
+      cv.width  = W;
+      cv.height = NET_H;
+      cv.style.height = NET_H + 'px';
+    }
+    return cv.getContext('2d');
+  }
+
+  function spawnPkt() {
+    const e = EDGES[Math.floor(Math.random() * EDGES.length)];
+    _pkts.push({ f: e[0], t: e[1], p: 0, spd: 0.006 + Math.random() * 0.007 });
+  }
+
+  function frame() {
+    const cv = document.getElementById('net-canvas');
+    if (!cv || !document.getElementById('view-honeynet').classList.contains('active')) {
+      cancelAnimationFrame(_raf); _raf = null; return;
+    }
+    const ctx = initCanvas(cv);
+    const W = cv.width, H = cv.height;
+
+    // Clear
+    ctx.fillStyle = '#050410'; ctx.fillRect(0,0,W,H);
+
+    // Grid dots
+    ctx.fillStyle = 'rgba(124,58,237,.06)';
+    for(let x=40;x<W;x+=44) for(let y=30;y<H;y+=44) { ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill(); }
+
+    // Animated dashed edges
+    const off = -(Date.now()/60) % 11;
+    EDGES.forEach(([a,b]) => {
+      const n1=NODES[a], n2=NODES[b];
+      const x1=n1.x*W, y1=n1.y*H, x2=n2.x*W, y2=n2.y*H;
+      const g = ctx.createLinearGradient(x1,y1,x2,y2);
+      g.addColorStop(0, n1.c+'44'); g.addColorStop(1, n2.c+'44');
+      ctx.save();
+      ctx.strokeStyle = g; ctx.lineWidth = 1.5;
+      ctx.setLineDash([5,6]); ctx.lineDashOffset = off;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+      ctx.restore();
+    });
+    ctx.setLineDash([]);
+
+    // Packets with trail
+    _pkts = _pkts.filter(pk => {
+      pk.p += pk.spd;
+      if(pk.p > 1) return false;
+      const n1=NODES[pk.f], n2=NODES[pk.t];
+      // Trail
+      for(let i=5;i>=1;i--) {
+        const tp = Math.max(0, pk.p - i*0.022);
+        const tx=(n1.x+(n2.x-n1.x)*tp)*W, ty=(n1.y+(n2.y-n1.y)*tp)*H;
+        ctx.globalAlpha = (0.6/i)*0.8;
+        ctx.fillStyle = n1.c;
+        ctx.beginPath(); ctx.arc(tx,ty, Math.max(0.5, 3-i*0.4),0,Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      // Head
+      const hx=(n1.x+(n2.x-n1.x)*pk.p)*W, hy=(n1.y+(n2.y-n1.y)*pk.p)*H;
+      ctx.save();
+      ctx.shadowColor=n1.c; ctx.shadowBlur=10;
+      ctx.fillStyle=n1.c;
+      ctx.beginPath(); ctx.arc(hx,hy,4,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      return true;
+    });
+
+    // Spawn
+    if(Math.random() < 0.04) spawnPkt();
+
+    // Nodes
+    NODES.forEach(n => {
+      const x=n.x*W, y=n.y*H;
+      // Outer glow
+      const g2=ctx.createRadialGradient(x,y,0,x,y,n.r*2.5);
+      g2.addColorStop(0,n.c+'22'); g2.addColorStop(1,'transparent');
+      ctx.fillStyle=g2; ctx.beginPath(); ctx.arc(x,y,n.r*2.5,0,Math.PI*2); ctx.fill();
+      // Circle
+      ctx.save();
+      ctx.shadowColor=n.c; ctx.shadowBlur=16;
+      ctx.fillStyle=n.c+'20'; ctx.strokeStyle=n.c+'CC'; ctx.lineWidth=1.8;
+      ctx.beginPath(); ctx.arc(x,y,n.r,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      // Icon
+      ctx.font=`${Math.round(n.r*.9)}px sans-serif`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(n.ico,x,y);
+      // Labels below
+      ctx.fillStyle='#9D98C0'; ctx.font='9px "JetBrains Mono"';
+      ctx.textBaseline='alphabetic';
+      n.lbl.forEach((l,i) => ctx.fillText(l, x, y+n.r+10+i*12));
+    });
+
+    _raf = requestAnimationFrame(frame);
+  }
+
+  // Exported function — replaces old drawNet
+  window.drawNet = function() {
+    cancelAnimationFrame(_raf); _pkts=[];
+    // Set canvas height immediately so sizing works even from hidden state
+    const cv = document.getElementById('net-canvas');
+    if(cv) { cv.style.height = NET_H+'px'; cv.height = NET_H; }
+    _raf = requestAnimationFrame(frame);
+  };
+
+  // Stop when leaving honeynet view
+  const _origNavShow = window.navShow;
+  window.navShow = function(viewId) {
+    if(viewId !== 'honeynet') { cancelAnimationFrame(_raf); _raf=null; }
+    _origNavShow(viewId);
+    // navShow already calls drawNet for honeynet — no double call needed
+  };
+
+  window.addEventListener('resize', () => {
+    if(document.getElementById('view-honeynet')?.classList.contains('active')) {
+      cancelAnimationFrame(_raf); _pkts=[];
+      _raf = requestAnimationFrame(frame);
+    }
+  });
+})();
+
+/* ═══════════ BREADCRUMBS ═══════════ */
+const bcs=[
+  {c:'am',title:'OpsProd-CredentialLeak',meta:['Type: Bash History','/home/admin/.bash_history','→ PROD-DB-FAKE-01'],badge:'ACTIVE',bc:'b-am',hits:3},
+  {c:'da',title:'AdminSSHKey-Lure',meta:['Type: SSH Private Key','/root/.ssh/id_rsa_backup','→ ADMIN-JUMP-FAKE'],badge:'TRIGGERED',bc:'b-da',hits:1},
+  {c:'em',title:'AWS-Keys-Breadcrumb',meta:['Type: AWS Access Key','.aws/credentials','→ S3-Canarytoken'],badge:'PLANTED',bc:'b-em',hits:0},
+];
+const bcf=document.getElementById('bc-feed');
+bcs.forEach(b=>{
+  const d=document.createElement('div'); d.className='feed-item';
+  d.innerHTML=`<div class="fi-dot ${b.c}"></div>
+    <div><div class="fi-title">${b.title}</div><div class="fi-meta">${b.meta.map(m=>`<span>${m}</span>`).join('')}</div></div>
+    <span class="badge ${b.bc}">${b.badge}</span>`;
+  bcf.appendChild(d);
+});
+const cl=document.getElementById('canary-list');
+[{t:'HTTP-CANARY-001',ip:'185.220.101.45',time:'14:22'},{t:'DNS-CANARY-003',ip:'45.142.212.100',time:'09:14'}].forEach(c=>{
+  cl.innerHTML+=`<div class="list-row"><span class="badge b-da" style="flex-shrink:0;">${c.t}</span><span style="font-family:var(--mono);font-size:11px;flex:1;">${c.ip}</span><span style="font-family:var(--mono);font-size:10px;color:var(--t3);">${c.time} UTC</span></div>`;
+});
+
+/* ═══════════ SIGMA RULES ═══════════ */
+const rules=[
+  {t:'SSH Brute Force — 5+ attempts/min',s:'CRIT',   on:true},
+  {t:'SQL Injection via Honeypot Input', s:'CRIT',   on:true},
+  {t:'Port Scan — SYN >1000/min',       s:'HIGH',   on:true},
+  {t:'Canarytoken HTTP Trigger',         s:'HIGH',   on:true},
+  {t:'Lateral Movement via SMB',         s:'CRIT',   on:false},
+  {t:'Tor Exit Node Connection',         s:'MEDIUM', on:true},
+];
+function renderSigma(){
+  const el=document.getElementById('sigma-rules'); if(!el)return;
+  el.innerHTML='';
+  rules.forEach((r,i)=>{
+    const bc=r.s==='CRIT'?'b-da':r.s==='HIGH'?'b-da':'b-am';
+    el.innerHTML+=`<div class="card" style="border-radius:var(--r);">
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">
+        <div style="width:6px;height:6px;border-radius:50%;background:${r.on?'var(--em)':'var(--t4)'};" ></div>
+        <span style="flex:1;font-size:11px;font-weight:500;color:var(--t1);">${r.t}</span>
+        <span class="badge ${bc}">${r.s}</span>
+      </div>
+      <div style="display:none;padding:0 12px 10px;">
+        <div class="term" style="border-radius:var(--r);"><div class="term-body" style="font-size:10px;padding:10px 12px;"><span class="kw">title</span>: <span class="st">${r.t}</span>\n<span class="kw">status</span>: ${r.on?'<span class="st">enabled</span>':'<span class="nm">disabled</span>'}\n<span class="kw">logsource</span>:\n  <span class="kw">category</span>: <span class="st">honeypot</span>\n<span class="kw">detection</span>:\n  <span class="kw">condition</span>: <span class="st">keywords</span></div></div>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button class="btn btn-primary btn-h24" onclick="runHunt()">▶ Run</button>
+          <button class="btn btn-muted btn-h24">Edit</button>
+        </div>
+      </div>
+    </div>`;
+  });
+}
+
+function renderMitreFull(){
+  const el=document.getElementById('mitre-full'); if(!el)return;
+  const tacticsFull=['Initial Access','Execution','Persistence','Privilege Esc.','Defense Evasion','Credential Access','Discovery','Lateral Move.','Collection','C2','Exfiltration','Impact'];
+  el.innerHTML='';
+  tacticsFull.forEach(t=>{
+    const h=Math.floor(Math.random()*10)+1;
+    const c=h>7?'var(--da)':h>4?'var(--am)':'var(--p)';
+    el.innerHTML+=`<div style="background:${c}18;border:1px solid ${c}44;border-radius:5px;padding:7px 6px;text-align:center;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='${c}'" onmouseout="this.style.borderColor='${c}44'">
+      <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:${c};">${h}</div>
+      <div style="font-size:9px;color:var(--t3);margin-top:2px;line-height:1.3;">${t}</div>
+    </div>`;
+  });
+}
+
+/* ═══════════ HUNT ═══════════ */
+const langQ={
+  SPL:`index=honeypot sourcetype=ssh_auth\n| where action="login_attempt"\n| stats count by src_ip, user, _time\n| where count > 5\n| eval threat_score=if(count>20,"HIGH","MEDIUM")\n| sort -count | head 50`,
+  KQL:`HoneypotEvents\n| where ActionType == "LoginAttempt"\n| summarize count() by SrcIP, Username\n| where count_ > 5\n| order by count_ desc\n| limit 50`,
+  Sigma:`title: Honeypot SSH Brute Force\nstatus: enabled\nlogsource:\n  category: honeypot\ndetection:\n  selection:\n    action: login_attempt\n  threshold:\n    field: src_ip\n    count: 5\n  condition: selection | threshold`,
+  SQL:`SELECT src_ip, username, COUNT(*) as attempts\nFROM honeypot_events\nWHERE action='login_attempt'\n  AND timestamp > NOW() - INTERVAL 24 HOUR\nGROUP BY src_ip, username\nHAVING attempts > 5\nORDER BY attempts DESC LIMIT 50;`,
+};
+function setLang(el,lang){
+  document.querySelectorAll('#lang-chips .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  const q=document.getElementById('hunt-q'); if(q) q.value=langQ[lang]||'';
+}
+function runHunt(){
+  const b=document.getElementById('hunt-badge');
+  const r=document.getElementById('hunt-results');
+  if(!b||!r) return;
+  b.textContent='Running…'; b.className='badge b-am';
+  r.innerHTML='<div style="padding:16px;text-align:center;color:var(--t3);font-family:var(--mono);font-size:11px;">Querying honeypot events…</div>';
+  setTimeout(()=>{
+    const cnt=Math.floor(Math.random()*40)+5;
+    b.textContent=`${cnt} matches`; b.className='badge b-da';
+    const rows=[
+      {ip:'185.220.101.45',u:'root',n:347},{ip:'45.142.212.100',u:'admin',n:214},{ip:'78.31.67.141',u:'ubuntu',n:89}
+    ];
+    r.innerHTML=`<table class="tbl"><thead><tr><th>SRC IP</th><th>User</th><th>Attempts</th><th>Score</th><th></th></tr></thead><tbody>${
+      rows.map(x=>`<tr><td class="mono-cell t1-cell">${x.ip}</td><td class="mono-cell">${x.u}</td>
+        <td class="mono-cell" style="color:var(--da);">${x.n}</td>
+        <td><span class="badge b-da">HIGH</span></td>
+        <td><button class="btn btn-muted btn-h24" onclick="toast('➕','em','IOC Added','${x.ip} added to intelligence database')">+ IOC</button></td></tr>`).join('')
+    }</tbody></table>`;
+    toast('✅','em','Hunt Complete',`${cnt} events matched your query`);
+  },1800);
+}
+
+/* ═══════════ IOC ═══════════ */
+const iocData=[
+  {v:'185.220.101.45',     t:'ip',    s:'Honeypot',  ts:'14:22',sc:95},
+  {v:'45.142.212.100',      t:'ip',    s:'Honeypot',  ts:'09:14',sc:88},
+  {v:'c2-payload-drop.ru', t:'domain',s:'MISP',      ts:'11:05',sc:92},
+  {v:'3bc4f9a1d8e2a4b7',   t:'hash',  s:'VirusTotal',ts:'08:30',sc:99},
+  {v:'http://malware[.]xyz/stage2',t:'url',s:'Canary',ts:'07:11',sc:97},
+  {v:'attacker@protonmail.com',t:'email',s:'Honeypot',ts:'06:44',sc:62},
+  {v:'104.21.88.12',        t:'ip',    s:'AbuseIPDB', ts:'05:22',sc:74},
+  {v:'23.129.64.131',       t:'ip',    s:'Honeypot',  ts:'03:59',sc:55},
+  {v:'exploit-kits[.]net', t:'domain',s:'MISP',      ts:'02:18',sc:87},
+  {v:'78.31.67.141',        t:'ip',    s:'Honeypot',  ts:'01:03',sc:71},
+];
+function renderIOC(data){
+  const el=document.getElementById('ioc-list'); if(!el)return;
+  el.innerHTML='';
+  data.forEach(r=>{
+    const sc=r.sc>70?'var(--da)':r.sc>40?'var(--am)':'var(--em)';
+    el.innerHTML+=`<div class="list-row">
+      <span style="font-family:var(--mono);font-size:11px;color:var(--t1);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.v}</span>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--t3);width:70px;">${r.t.toUpperCase()}</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--t3);width:80px;">${r.s}</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--t3);width:80px;">${r.ts} UTC</span>
+      <span style="font-family:var(--mono);font-size:11px;font-weight:700;width:50px;text-align:right;color:${sc};">${r.sc}</span>
+      <div style="width:60px;display:flex;justify-content:flex-end;">
+        <button class="btn btn-muted btn-h24" onclick="toast('➕','em','IOC Action','${r.v} — action taken')">···</button>
+      </div>
+    </div>`;
+  });
+}
+const is=document.getElementById('ioc-search');
+if(is) is.addEventListener('input',function(){renderIOC(iocData.filter(r=>r.v.toLowerCase().includes(this.value.toLowerCase())));});
+
+/* ═══════════ ATTACKER PROFILES ═══════════ */
+const attackers=[
+  {ip:'185.220.101.45',tag:'TOR-APT-07',flag:'🇩🇪',geo:'DE / Tor Exit',ttl:'18 min',sess:12,tools:['Hydra','Nmap','SQLmap'],tactics:['Brute Force','SQL Inject','Lateral Move'],sc:95},
+  {ip:'45.142.212.100',tag:'RU-SCAN-03', flag:'🇷🇺',geo:'RU / Moscow',  ttl:'4 min', sess:7, tools:['Masscan','Metasploit'],tactics:['Port Scan','Exploit','C2 Beacon'],sc:88},
+  {ip:'104.21.88.12',  tag:'CN-BOT-11',  flag:'🇨🇳',geo:'CN / Botnet',  ttl:'2 min', sess:4, tools:['Custom','Unknown'],    tactics:['Cred Stuff','Exfiltration'],sc:74},
+];
+function renderAttackers(){
+  const el=document.getElementById('attacker-grid'); if(!el)return; el.innerHTML='';
+  attackers.forEach(a=>{
+    const sc=a.sc>89?'b-da':'b-am';
+    const c=a.sc>89?'var(--da)':'var(--am)';
+    el.innerHTML+=`<div class="card" style="display:flex;flex-direction:column;">
+      <div style="padding:14px 16px 10px;border-bottom:1px solid rgba(255,255,255,.04);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-size:22px;">${a.flag}</span>
+          <div>
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:${c};">${a.tag}</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--t3);">${a.ip}</div>
+          </div>
+          <span class="badge ${sc}" style="margin-left:auto;">${a.sc}</span>
+        </div>
+        <div class="pbar"><div class="pbar-fill" style="width:${a.sc}%;background:${c};"></div></div>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:8px;flex:1;">
+        <div>
+          <div class="section-label">Tools Observed</div>
+          <div class="chip-group">${a.tools.map(t=>`<div class="chip">${t}</div>`).join('')}</div>
+        </div>
+        <div>
+          <div class="section-label">MITRE Tactics</div>
+          <div class="chip-group">${a.tactics.map(t=>`<div class="chip on">${t}</div>`).join('')}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:auto;">
+          <div style="background:var(--s2);border:1px solid rgba(255,255,255,.05);border-radius:var(--r);padding:7px 10px;text-align:center;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-bottom:2px;">AVG SESSION</div>
+            <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--t1);">${a.ttl}</div>
+          </div>
+          <div style="background:var(--s2);border:1px solid rgba(255,255,255,.05);border-radius:var(--r);padding:7px 10px;text-align:center;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-bottom:2px;">SESSIONS</div>
+            <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--t1);">${a.sess}</div>
+          </div>
+        </div>
+        <button class="btn btn-danger btn-h28" style="width:100%;" onclick="toast('🚫','em','IP Blocked','${a.ip} sent to firewall')">Block ${a.ip}</button>
+      </div>
+    </div>`;
+  });
+}
+
+/* ═══════════ INIT ═══════════ */
+setTimeout(updatePreview,100);
+setTimeout(renderHpList, 100);
+
+/* ═══════════ AI AGENT (MOCK) ═══════════ */
+const aiWorkflows = {
+  triage: [
+    {t:'cm',x:'# Workflow: Incident Triage (mock)'},
+    {t:'kw',x:'[ingest]'}, {t:'st',x:' Loading 8 synthetic events from live feed…'},
+    {t:'kw',x:'[rank]'}, {t:'st',x:' Critical: SSH brute-force 185.220.101.45 (347 attempts)'},
+    {t:'kw',x:'[rank]'}, {t:'st',x:' High: Canarytoken HTTP + lateral move attempt'},
+    {t:'kw',x:'[advice]'}, {t:'st',x:' Recommend: open ticket SEV-1, block /24 after analyst review'},
+    {t:'cm',x:'# Human approval required — no auto-block'},
+  ],
+  ioc: [
+    {t:'cm',x:'# Workflow: IOC Correlation (mock)'},
+    {t:'kw',x:'[correlate]'}, {t:'st',x:' 185.220.101.45 ↔ Tor exit, hash 3bc4f9…, domain c2-payload-drop.ru'},
+    {t:'kw',x:'[score]'}, {t:'st',x:' Cluster confidence 0.91 — likely same campaign'},
+    {t:'kw',x:'[output]'}, {t:'st',x:' STIX bundle draft ready (not exported)'},
+  ],
+  ticket: [
+    {t:'cm',x:'# Workflow: Ticket Draft (mock)'},
+    {t:'kw',x:'[draft]'}, {t:'st',x:' Title: SSH brute-force from Tor exit 185.220.101.45'},
+    {t:'kw',x:'[draft]'}, {t:'st',x:' Severity: HIGH · Linked: HNY-SSH-01, IOC×3'},
+    {t:'kw',x:'[action]'}, {t:'st',x:' Ticket TKT-1042 created in queue (mock)'},
+  ],
+  report: [
+    {t:'cm',x:'# Workflow: Executive Summary 24h (mock)'},
+    {t:'kw',x:'[summary]'}, {t:'st',x:' 247 intrusions · 83 unique IPs · 0 FP · risk index 74'},
+    {t:'kw',x:'[highlight]'}, {t:'st',x:' Primary actor: TOR-APT-07 (DE/Tor)'},
+    {t:'kw',x:'[done]'}, {t:'st',x:' Report draft in Auto Reports (not auto-published)'},
+  ],
+  contain: [
+    {t:'cm',x:'# Workflow: Containment Advice (advisory only)'},
+    {t:'kw',x:'[advice]'}, {t:'st',x:' 1. Verify isolation probe still green'},
+    {t:'kw',x:'[advice]'}, {t:'st',x:' 2. Queue blocklist for 185.220.101.0/24 (analyst)'},
+    {t:'kw',x:'[advice]'}, {t:'st',x:' 3. Rotate canarytokens touched by this IP'},
+    {t:'cm',x:'# No firewall/API calls executed — human-in-the-loop'},
+  ],
+  custom: [
+    {t:'cm',x:'# Custom prompt (mock response)'},
+    {t:'kw',x:'[parse]'}, {t:'st',x:' User context treated as UNTRUSTED DATA'},
+    {t:'kw',x:'[reply]'}, {t:'st',x:' Analyzed against synthetic honeypot corpus only. No tool use.'},
+  ],
+};
+function runAIWorkflow(kind){
+  const el=document.getElementById('ai-console');
+  const st=document.getElementById('ai-status');
+  if(!el) return;
+  st.textContent='RUNNING'; st.className='badge b-am';
+  el.innerHTML='';
+  const steps=aiWorkflows[kind]||aiWorkflows.custom;
+  let i=0;
+  const tick=()=>{
+    if(i>=steps.length){
+      el.innerHTML+=`<span class="pr">▌</span><span class="cursor"></span>`;
+      st.textContent='IDLE'; st.className='badge b-p';
+      auditEvent('p','AI agent workflow',`Workflow ${kind} completed (mock, no side effects)`);
+      if(kind==='ticket'){ createTicketFromAI(); }
+      return;
+    }
+    const s=steps[i++];
+    el.innerHTML+=`<span class="${s.t}">${s.x}</span>\n`;
+    el.scrollTop=el.scrollHeight;
+    setTimeout(tick, 350+Math.random()*200);
+  };
+  tick();
+}
+
+/* ═══════════ REPORTS ═══════════ */
+const reportStore=[];
+function generateReport(){
+  const type=document.getElementById('rpt-type')?.value||'Daily';
+  const range=document.getElementById('rpt-range')?.value||'24h';
+  const sections=[...document.querySelectorAll('#rpt-sections .chip.on')].map(c=>c.textContent);
+  toast('📄','p','Generating…',`${type} · ${range}`);
+  setTimeout(()=>{
+    const id='RPT-'+String(1000+reportStore.length+1);
+    const body = [
+      '# ' + type,
+      '**Range:** ' + range,
+      '**Generated:** ' + new Date().toISOString(),
+      '',
+      '## Sections',
+      ...(sections.length ? sections.map(s => '- ' + s) : ['- (none)']),
+      '',
+      '## Summary (mock)',
+      '- Active honeypots: 14',
+      '- Intrusions (window): 247',
+      '- Unique attacker IPs: 83',
+      '- Risk index: 74',
+      '- Open tickets: 5',
+      '',
+      '## Top IP',
+      '- 185.220.101.45 — CRITICAL — 347 hits',
+      '',
+      '## Notes',
+      'Synthetic data only. Not for production evidence without review.'
+    ].join('\n');
+    reportStore.unshift({id,type,range,body,ts:new Date().toISOString()});
+    document.getElementById('rpt-preview').innerHTML=body.split('\n').map(l=>{
+      if(l.startsWith('#')) return `<span class="kw">${l}</span>`;
+      if(l.startsWith('**')) return `<span class="st">${l}</span>`;
+      return `<span class="cm">${l||' '}</span>`;
+    }).join('\n');
+    renderReportList();
+    toast('✅','em','Report Ready',id);
+    auditEvent('em','Report generated',`${id} ${type}`);
+  },1000);
+}
+function renderReportList(){
+  const el=document.getElementById('rpt-list');
+  const cnt=document.getElementById('rpt-count');
+  if(!el) return;
+  if(cnt) cnt.textContent=String(reportStore.length);
+  if(!reportStore.length){ el.innerHTML='<div style="padding:20px;text-align:center;color:var(--t4);font-family:var(--mono);font-size:11px;">No reports yet</div>'; return; }
+  el.innerHTML=reportStore.map((r,i)=>`<div class="list-row" data-rpt-i="${i}" style="cursor:pointer;">
+    <span class="badge b-p">${r.id}</span>
+    <span style="flex:1;font-size:11px;color:var(--t1);">${r.type}</span>
+    <span style="font-family:var(--mono);font-size:10px;color:var(--t3);">${r.range}</span>
+  </div>`).join('');
+  el.querySelectorAll('[data-rpt-i]').forEach(row=>{
+    row.addEventListener('click',()=>{
+      const r=reportStore[+row.getAttribute('data-rpt-i')];
+      if(!r) return;
+      const prev=document.getElementById('rpt-preview');
+      if(prev) prev.textContent=r.body;
+    });
+  });
+}
+function saveAITrainingSelection(){
+  const sel={
+    patterns:!!document.getElementById('ai-data-patterns')?.checked,
+    sigma:!!document.getElementById('ai-data-sigma')?.checked,
+    tickets:!!document.getElementById('ai-data-tickets')?.checked,
+    hp:!!document.getElementById('ai-data-hp')?.checked,
+  };
+  const any=Object.values(sel).some(Boolean);
+  if(!any){ toast('ℹ','am','No data selected','Nothing will be stored for AI training'); return; }
+  toast('🧠','em','Preferences saved',`Opt-in flags: ${Object.entries(sel).filter(([,v])=>v).map(([k])=>k).join(', ')}`);
+  auditEvent('am','AI training opt-in',JSON.stringify(sel));
+}
+
+/* ═══════════ IP TRACKER ═══════════ */
+const ipTrackData=[
+  {ip:'185.220.101.45',hits:347,first:'08:01',last:'15:12',risk:'CRITICAL',targets:['HNY-SSH-01','PROD-DB-01'],events:[
+    {t:'08:01',m:'First seen — SYN scan'},
+    {t:'09:14',m:'SSH brute-force started'},
+    {t:'12:40',m:'347 failed logins'},
+    {t:'14:22',m:'Canarytoken HTTP triggered'},
+    {t:'15:12',m:'Lateral move attempt 10.10.0.1→50'},
+  ]},
+  {ip:'45.142.212.100',hits:214,first:'07:30',last:'14:58',risk:'HIGH',targets:['PROD-DB-01','.env lure'],events:[
+    {t:'07:30',m:'MySQL auth admin/admin123'},
+    {t:'09:00',m:'Breadcrumb .env read'},
+    {t:'14:58',m:'DNS canary fired'},
+  ]},
+  {ip:'104.21.88.12',hits:156,first:'06:11',last:'13:20',risk:'HIGH',targets:['HNY-HTTP-01'],events:[
+    {t:'06:11',m:'HTTP recon'},
+    {t:'13:20',m:'SQLi payload on decoy form'},
+  ]},
+  {ip:'23.129.64.131',hits:89,first:'10:00',last:'12:15',risk:'MEDIUM',targets:['HNY-FTP-01'],events:[
+    {t:'10:00',m:'FTP anon attempt'},
+    {t:'12:15',m:'Disconnected'},
+  ]},
+  {ip:'78.31.67.141',hits:67,first:'11:22',last:'11:45',risk:'MEDIUM',targets:['HNY-SSH-01'],events:[
+    {t:'11:22',m:'SSH password spray'},
+    {t:'11:45',m:'Stopped after 67 tries'},
+  ]},
+];
+function renderIPTrack(filter=''){
+  const el=document.getElementById('ip-track-list'); if(!el) return;
+  const q=(filter||document.getElementById('ip-search')?.value||'').toLowerCase();
+  const rows=ipTrackData.filter(r=>!q||r.ip.includes(q));
+  el.innerHTML=rows.map(r=>{
+    const rc=r.risk==='CRITICAL'?'b-da':r.risk==='HIGH'?'b-da':'b-am';
+    return `<div class="list-row" style="display:grid;grid-template-columns:140px 70px 80px 70px 90px 1fr 70px;gap:0;padding:9px 14px;" onclick="showIPTimeline('${r.ip}')">
+      <span class="mono-cell t1-cell">${r.ip}</span>
+      <span class="mono-cell">${r.hits}</span>
+      <span class="mono-cell" style="color:var(--t3);">${r.first}</span>
+      <span class="mono-cell" style="color:var(--t3);">${r.last}</span>
+      <span><span class="badge ${rc}">${r.risk}</span></span>
+      <span style="font-size:10px;color:var(--t3);overflow:hidden;text-overflow:ellipsis;">${r.targets.join(', ')}</span>
+      <button class="btn btn-danger btn-h24" onclick="event.stopPropagation();toast('🚫','em','Blocked','${r.ip} queued (mock)')">Block</button>
+    </div>`;
+  }).join('');
+}
+function filterIPTrack(){ renderIPTrack(); }
+function showIPTimeline(ip){
+  const r=ipTrackData.find(x=>x.ip===ip); if(!r) return;
+  document.getElementById('ip-tl-title').textContent=ip;
+  const el=document.getElementById('ip-timeline');
+  el.innerHTML=r.events.map(e=>`<div class="feed-item"><div class="fi-dot da"></div><div><div class="fi-title">${e.m}</div></div><div class="fi-time">${e.t}</div></div>`).join('');
+}
+
+/* ═══════════ ASSETS ═══════════ */
+const assetData=[
+  {id:'AST-001',name:'fw-edge-01',type:'network',ip:'10.0.0.1',owner:'NetOps',os:'VyOS 1.4',docs:'Firewall policy v3.2',svc:'Last service: 2026-06-12 · Warranty OK',risk:'low'},
+  {id:'AST-002',name:'db-prod-primary',type:'server',ip:'10.1.0.10',owner:'DBA',os:'Ubuntu 22.04',docs:'PostgreSQL 15 runbook',svc:'Backup daily 02:00 · Patch window Sun',risk:'high'},
+  {id:'AST-003',name:'hny-ssh-01',type:'server',ip:'10.10.0.22',owner:'SecOps',os:'Debian decoy',docs:'Honeypot profile SSH-8.9',svc:'Decoy — no production SLA',risk:'decoy'},
+  {id:'AST-004',name:'plc-line-a',type:'ot',ip:'10.50.0.5',owner:'OT',os:'Siemens S7',docs:'OT network diagram (restricted)',svc:'Vendor: Siemens · Call: +1-555-OT',risk:'critical'},
+  {id:'AST-005',name:'laptop-ceo',type:'endpoint',ip:'10.2.5.88',owner:'Exec',os:'Windows 11',docs:'EDR policy standard',svc:'MDM enrolled · BitLocker on',risk:'medium'},
+  {id:'AST-006',name:'sw-core-02',type:'network',ip:'10.0.0.2',owner:'NetOps',os:'Cisco IOS-XE',docs:'Core switching design',svc:'SmartNet active till 2027',risk:'low'},
+];
+function renderAssets(){
+  const el=document.getElementById('asset-list'); if(!el) return;
+  const q=(document.getElementById('asset-search')?.value||'').toLowerCase();
+  const tf=document.getElementById('asset-type-f')?.value||'all';
+  const rows=assetData.filter(a=>(tf==='all'||a.type===tf)&&(!q||a.name.includes(q)||a.ip.includes(q)||a.owner.toLowerCase().includes(q)));
+  el.innerHTML=rows.map(a=>{
+    const bc=a.risk==='critical'?'b-da':a.risk==='high'?'b-am':a.risk==='decoy'?'b-p':'b-em';
+    return `<div class="list-row" onclick="showAsset('${a.id}')">
+      <span class="badge ${bc}">${a.type}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--t1);flex:1;">${a.name}</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--t3);">${a.ip}</span>
+      <span style="font-size:10px;color:var(--t3);">${a.owner}</span>
+    </div>`;
+  }).join('');
+}
+function showAsset(id){
+  const a=assetData.find(x=>x.id===id); if(!a) return;
+  document.getElementById('asset-detail-sub').textContent=a.name;
+  document.getElementById('asset-detail-body').innerHTML=`
+    <div class="sys-row"><span class="sys-label">ID</span><span class="sys-val">${a.id}</span></div>
+    <div class="sys-row"><span class="sys-label">Type</span><span class="sys-val">${a.type}</span></div>
+    <div class="sys-row"><span class="sys-label">IP</span><span class="sys-val">${a.ip}</span></div>
+    <div class="sys-row"><span class="sys-label">Owner</span><span class="sys-val">${a.owner}</span></div>
+    <div class="sys-row"><span class="sys-label">OS / FW</span><span class="sys-val">${a.os}</span></div>
+    <div class="section-label" style="margin-top:12px;">Technical Documentation</div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:8px;">${a.docs}</div>
+    <div class="section-label">Service Information</div>
+    <div style="font-size:12px;color:var(--t2);">${a.svc}</div>
+    <div style="margin-top:12px;display:flex;gap:8px;">
+      <button class="btn btn-muted btn-h28" onclick="toast('📄','p','Docs','Mock: documentation package downloaded')">Download Docs</button>
+      <button class="btn btn-ghost btn-h28" onclick="toast('🎫','p','Ticket','Linked ticket draft from asset')">Open Ticket</button>
+    </div>`;
+}
+
+/* ═══════════ TICKETS ═══════════ */
+let ticketFilter='all';
+const ticketData=[
+  {id:'TKT-1042',title:'SSH brute-force Tor exit',sev:'HIGH',status:'open',ip:'185.220.101.45',asset:'hny-ssh-01',desc:'347 failed logins on HNY-SSH-01. Actor tagged TOR-APT-07.',notes:[]},
+  {id:'TKT-1041',title:'Canarytoken HTTP fired',sev:'HIGH',status:'progress',ip:'185.220.101.45',asset:'token-api-007',desc:'HTTP canary /api/admin/export triggered.',notes:[{by:'ANALYST',t:'Investigating related SSH activity'}]},
+  {id:'TKT-1040',title:'.env breadcrumb read',sev:'MEDIUM',status:'progress',ip:'45.142.212.100',asset:'PROD-DB-FAKE-01',desc:'Lure file read; attacker may pivot to MySQL decoy.',notes:[]},
+  {id:'TKT-1039',title:'SQLi on HTTP decoy',sev:'MEDIUM',status:'open',ip:'104.21.88.12',asset:'hny-http-01',desc:'Classic SQLi payload on login form decoy.',notes:[]},
+  {id:'TKT-1035',title:'FTP anon attempts',sev:'LOW',status:'resolved',ip:'23.129.64.131',asset:'hny-ftp-01',desc:'Anonymous FTP probes — closed, IP monitored.',notes:[{by:'OPERATOR',t:'Resolved — noise, no further action'}]},
+];
+function renderTickets(){
+  const el=document.getElementById('ticket-list'); if(!el) return;
+  const rows=ticketData.filter(t=>ticketFilter==='all'||t.status===ticketFilter||(ticketFilter==='progress'&&t.status==='progress'));
+  el.innerHTML=rows.map(t=>{
+    const sc=t.sev==='HIGH'?'b-da':t.sev==='MEDIUM'?'b-am':'b-em';
+    const st=t.status==='open'?'b-da':t.status==='progress'?'b-am':'b-em';
+    return `<div class="list-row" onclick="openTicket('${t.id}')">
+      <span class="badge ${sc}">${t.sev}</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--t3);">${t.id}</span>
+      <span style="flex:1;font-size:12px;color:var(--t1);">${t.title}</span>
+      <span class="badge ${st}">${t.status}</span>
+    </div>`;
+  }).join('');
+}
+function filterTickets(f,el){
+  ticketFilter=f;
+  document.querySelectorAll('.view#view-tickets .chip-group .chip').forEach(c=>c.classList.remove('on'));
+  if(el) el.classList.add('on');
+  renderTickets();
+}
+function openTicket(id){
+  const t=ticketData.find(x=>x.id===id); if(!t) return;
+  document.getElementById('tw-sub').textContent=t.id+' · '+t.title;
+  document.getElementById('tw-status').textContent=t.status.toUpperCase();
+  document.getElementById('tw-status').className='badge '+(t.status==='open'?'b-da':t.status==='progress'?'b-am':'b-em');
+  const notes=t.notes.map(n=>`<div class="feed-item"><div class="fi-dot p"></div><div><div class="fi-title">${n.by}</div><div class="fi-meta"><span>${n.t}</span></div></div></div>`).join('')||'<div style="color:var(--t4);font-size:11px;">No notes yet</div>';
+  document.getElementById('tw-body').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
+      <div style="background:var(--s2);padding:8px;border-radius:var(--r);"><div class="label">Severity</div><span class="badge ${t.sev==='HIGH'?'b-da':'b-am'}">${t.sev}</span></div>
+      <div style="background:var(--s2);padding:8px;border-radius:var(--r);"><div class="label">Related IP</div><span class="mono-cell t1-cell">${t.ip}</span></div>
+      <div style="background:var(--s2);padding:8px;border-radius:var(--r);"><div class="label">Asset</div><span style="font-size:11px;">${t.asset}</span></div>
+      <div style="background:var(--s2);padding:8px;border-radius:var(--r);"><div class="label">Status</div><span style="font-size:11px;">${t.status}</span></div>
+    </div>
+    <div><div class="section-label">Description</div><div style="font-size:12px;color:var(--t2);">${t.desc}</div></div>
+    <div><div class="section-label">Investigation Notes</div><div id="tw-notes">${notes}</div></div>
+    <div class="fg"><label class="label">Add note</label><textarea class="input" id="tw-note-in" rows="2" placeholder="Analyst note…"></textarea></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-primary btn-h28" onclick="addTicketNote('${t.id}')">Add Note</button>
+      <button class="btn btn-emerald btn-h28" onclick="setTicketStatus('${t.id}','progress')">In Progress</button>
+      <button class="btn btn-muted btn-h28" onclick="setTicketStatus('${t.id}','resolved')">Resolve</button>
+      <button class="btn btn-danger btn-h28" onclick="toast('🚫','em','Block IP','${t.ip} queued from ticket (mock)')">Block IP</button>
+      <button class="btn btn-ghost btn-h28" onclick="runAIWorkflow('contain')">AI Advice</button>
+    </div>`;
+}
+function addTicketNote(id){
+  const t=ticketData.find(x=>x.id===id); if(!t) return;
+  const v=document.getElementById('tw-note-in')?.value?.trim(); if(!v) return;
+  t.notes.push({by:'OPERATOR',t:v});
+  auditEvent('p','Ticket note',`${id}: ${v.slice(0,60)}`);
+  openTicket(id);
+}
+function setTicketStatus(id,st){
+  const t=ticketData.find(x=>x.id===id); if(!t) return;
+  t.status=st;
+  toast('✅','em','Ticket updated',`${id} → ${st}`);
+  auditEvent('em','Ticket status',`${id} → ${st}`);
+  renderTickets();
+  openTicket(id);
+}
+function createTicket(){
+  const id='TKT-'+(1043+ticketData.length);
+  ticketData.unshift({id,title:'Manual ticket',sev:'MEDIUM',status:'open',ip:'—',asset:'—',desc:'Created by operator.',notes:[]});
+  renderTickets();
+  openTicket(id);
+  toast('🎫','p','Ticket created',id);
+}
+function createTicketFromAI(){
+  const id='TKT-'+(1043+ticketData.length);
+  ticketData.unshift({id,title:'SSH brute-force from Tor exit 185.220.101.45',sev:'HIGH',status:'open',ip:'185.220.101.45',asset:'hny-ssh-01',desc:'Auto-drafted by AI Agent (mock). Human must review.',notes:[{by:'AI-AGENT',t:'Draft only — no automated containment'}]});
+  toast('🎫','em','AI Ticket Draft',id+' — open Tickets to review');
+}
+
+
+
+/* ═══════════ BOOT ═══════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    // overview widgets already self-init via setTimeout at bottom
+    renderHpList();
+    updatePreview();
+    renderIOC(iocData);
+    renderAttackers();
+    renderIPTrack();
+    renderAssets();
+    renderTickets();
+    renderReportList();
+  } catch(e) { console.error('boot', e); }
+});
+
+</script>
+
+<!-- ═══════════════════════════════════════════════
+     FRONTEND ENHANCEMENT LAYER v3
+     Works on top of Patrik's secure edition
+═══════════════════════════════════════════════ -->
+<div id="toasts-v3" style="position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9000;pointer-events:none;"></div>
+
+<style>
+/* ── SPLASH ─────────────────────────────────── */
+#splash {
+  position:fixed;inset:0;z-index:9999;
+  background:#06050A;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+}
+.splash-word { font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;letter-spacing:2px;color:#EDEAF8; }
+.splash-word span { color:#7C3AED; }
+.splash-sub { font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;color:#352F52; }
+.splash-bar-wrap { width:220px;height:2px;background:#181628;border-radius:2px;overflow:hidden; }
+.splash-bar { height:100%;width:0;background:linear-gradient(90deg,#7C3AED,#A78BFA);transition:width .08s linear; }
+.splash-msg { font-family:'JetBrains Mono',monospace;font-size:9px;color:#352F52;letter-spacing:1px;min-height:14px; }
+
+/* ── COMMAND PALETTE ────────────────────────── */
+#cmd-overlay {
+  display:none;position:fixed;inset:0;z-index:8000;
+  background:rgba(6,5,10,.88);backdrop-filter:blur(10px);
+  align-items:flex-start;justify-content:center;padding-top:14vh;
+}
+#cmd-box {
+  width:540px;
+  background:#181628;
+  border:1px solid rgba(124,58,237,.45);
+  border-radius:14px;
+  box-shadow:0 40px 80px rgba(0,0,0,.7),0 0 0 1px rgba(124,58,237,.12);
+  overflow:hidden;
+}
+#cmd-search {
+  display:flex;align-items:center;gap:10px;
+  padding:13px 16px;border-bottom:1px solid rgba(124,58,237,.15);
+}
+#cmd-input {
+  flex:1;background:none;border:none;outline:none;
+  font-family:'Space Grotesk',sans-serif;font-size:14px;color:#EDEAF8;
+}
+#cmd-input::placeholder { color:#352F52; }
+#cmd-results { max-height:340px;overflow-y:auto;padding:6px; }
+.cmd-item {
+  display:flex;align-items:center;gap:12px;
+  padding:9px 12px;border-radius:8px;cursor:pointer;
+  transition:background .1s;
+}
+.cmd-item:hover,.cmd-item.focused { background:rgba(124,58,237,.14); }
+.cmd-item-icon { font-size:16px;width:26px;text-align:center;flex-shrink:0; }
+.cmd-item-label { font-size:13px;font-weight:600;color:#EDEAF8; }
+.cmd-item-sub   { font-family:'JetBrains Mono',monospace;font-size:10px;color:#58527A; }
+.cmd-item-enter {
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:#352F52;
+  border:1px solid #352F52;padding:2px 5px;border-radius:3px;flex-shrink:0;
+}
+.cmd-section {
+  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:1.5px;color:#352F52;text-transform:uppercase;
+  padding:8px 12px 4px;
+}
+
+/* ── SHORTCUTS OVERLAY ──────────────────────── */
+#kbd-overlay {
+  display:none;position:fixed;inset:0;z-index:8000;
+  background:rgba(6,5,10,.88);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;
+}
+#kbd-box {
+  width:500px;
+  background:#181628;border:1px solid rgba(124,58,237,.35);
+  border-radius:14px;box-shadow:0 40px 80px rgba(0,0,0,.7);overflow:hidden;
+}
+.kbd-head {
+  padding:13px 18px;border-bottom:1px solid rgba(124,58,237,.12);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.kbd-title { font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#58527A; }
+.kbd-esc {
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:#352F52;
+  border:1px solid #352F52;padding:2px 7px;border-radius:3px;cursor:pointer;
+}
+.kbd-grid { display:grid;grid-template-columns:1fr 1fr;gap:0 24px;padding:14px 18px; }
+.kbd-row {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 0;border-bottom:1px solid rgba(255,255,255,.03);
+}
+.kbd-desc { font-size:11px;color:#9D98C0; }
+.kbd-key {
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:#9D98C0;
+  background:#201E35;border:1px solid rgba(124,58,237,.2);
+  padding:2px 7px;border-radius:4px;
+}
+
+/* ── TILT CARDS ─────────────────────────────── */
+.stat-card { transform-style:preserve-3d;will-change:transform; }
+
+/* ── RIPPLE ─────────────────────────────────── */
+@keyframes rpl { to { transform:scale(3);opacity:0; } }
+
+/* ── GEO MAP CARD ───────────────────────────── */
+#geo-card {
+  background:#110F1C;border:1px solid rgba(124,58,237,.10);border-radius:14px;overflow:hidden;
+  position:relative;transition:border-color .2s;
+}
+#geo-card:hover { border-color:rgba(124,58,237,.22); }
+#geo-card::before {
+  content:'';position:absolute;top:0;left:16px;right:16px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(239,68,68,.4) 50%,transparent);
+  opacity:0;transition:opacity .2s;
+}
+#geo-card:hover::before { opacity:1; }
+
+/* ── CMDK HINT ──────────────────────────────── */
+.cmdk-hint {
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:#352F52;
+  display:flex;align-items:center;gap:4px;cursor:pointer;
+  transition:color .15s;
+}
+.cmdk-hint:hover { color:#58527A; }
+.cmdk-key {
+  border:1px solid #352F52;padding:1px 5px;
+  border-radius:3px;transition:border-color .15s;
+}
+.cmdk-hint:hover .cmdk-key { border-color:#58527A; }
+</style>
+
+<script>
+/* ══════════════════════════════════════════════
+   SPLASH SCREEN — rabbit-hole animation
+══════════════════════════════════════════════ */
+(function(){
+  const s = document.createElement('div');
+  s.id='splash';
+  s.innerHTML=`
+    <canvas id="splash-c" width="260" height="260" style="display:block;"></canvas>
+    <div class="splash-word" style="opacity:0;transition:opacity .5s .2s;" id="sw">Rabbit<span>Hollow</span></div>
+    <div class="splash-sub"  style="opacity:0;transition:opacity .5s .4s;" id="ss">DECEPTION INTELLIGENCE PLATFORM · SECURE EDITION</div>
+    <div class="splash-bar-wrap" style="opacity:0;transition:opacity .3s .5s;" id="sb-w">
+      <div class="splash-bar" id="sb-b"></div>
+    </div>
+    <div class="splash-msg" id="sm">Booting…</div>
+  `;
+  document.body.appendChild(s);
+
+  // Spiral
+  const c=document.getElementById('splash-c'), ctx=c.getContext('2d');
+  const cx=130,cy=130; let ang=0;
+  function frame(){
+    ctx.fillStyle='rgba(6,5,10,.2)';ctx.fillRect(0,0,260,260);
+    for(let i=0;i<9;i++){
+      const r=12+i*13, a=ang-i*.35, alpha=(1-i/9)*.75;
+      ctx.strokeStyle=`rgba(124,58,237,${alpha})`;
+      ctx.lineWidth=1.8-i*.12;
+      ctx.beginPath();ctx.arc(cx,cy,r,a,a+Math.PI*1.65);ctx.stroke();
+      const ex=cx+Math.cos(a+Math.PI*1.65)*r, ey=cy+Math.sin(a+Math.PI*1.65)*r;
+      ctx.fillStyle=`rgba(167,139,250,${alpha*.8})`;
+      ctx.beginPath();ctx.arc(ex,ey,2,0,Math.PI*2);ctx.fill();
+    }
+    const g=ctx.createRadialGradient(cx,cy,0,cx,cy,28);
+    g.addColorStop(0,'rgba(124,58,237,.55)');g.addColorStop(1,'transparent');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,28,0,Math.PI*2);ctx.fill();
+    ang+=.035;
+    if(document.getElementById('splash')) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // Reveal text
+  setTimeout(()=>{
+    document.getElementById('sw').style.opacity='1';
+    document.getElementById('ss').style.opacity='1';
+    document.getElementById('sb-w').style.opacity='1';
+  },300);
+
+  // Progress
+  const msgs=['Initializing deception layer…','Loading honeypot nodes…','Syncing threat intelligence…','Verifying security gates…','Validating audit chain…','Connecting AI agent…','System ready — welcome back.'];
+  const bar=document.getElementById('sb-b'), msg=document.getElementById('sm');
+  let p=0,mi=0;
+  const iv=setInterval(()=>{
+    p=Math.min(p+15,100);
+    if(bar) bar.style.width=p+'%';
+    if(msg&&msgs[mi]) msg.textContent=msgs[mi++];
+    if(p>=100){
+      clearInterval(iv);
+      setTimeout(()=>{
+        s.style.transition='opacity .45s';s.style.opacity='0';
+        setTimeout(()=>s.remove(),450);
+      },320);
+    }
+  },260);
+})();
+
+/* ══════════════════════════════════════════════
+   COMMAND PALETTE  Ctrl+K / ⌘K
+══════════════════════════════════════════════ */
+(function(){
+  const ov=document.createElement('div');
+  ov.id='cmd-overlay';
+  ov.innerHTML=`
+    <div id="cmd-box">
+      <div id="cmd-search">
+        <svg width="15" height="15" fill="none" stroke="#7C3AED" viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="cmd-input" placeholder="Search views, actions, run hunt…" autocomplete="off" spellcheck="false">
+        <span style="font-family:'JetBrains Mono';font-size:10px;color:#352F52;border:1px solid #352F52;padding:2px 6px;border-radius:3px;">ESC</span>
+      </div>
+      <div id="cmd-results"></div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const groups = [
+    { section:'Navigation', items:[
+      {icon:'⬛',label:'Dashboard',         sub:'Overview, stats, live feed',         view:'overview'},
+      {icon:'🎯',label:'Honeypot Builder',   sub:'Design and deploy decoy nodes',      view:'honeypot'},
+      {icon:'🌐',label:'Honeynet Designer',  sub:'Topology and containment',           view:'honeynet'},
+      {icon:'🍞',label:'Breadcrumb Trails',  sub:'Plant lures for attackers',          view:'breadcrumb'},
+      {icon:'🔍',label:'Threat Hunting',     sub:'Sigma / KQL / SPL queries',          view:'threathunt'},
+      {icon:'📋',label:'IOC Intelligence',   sub:'Browse indicators of compromise',    view:'ioc'},
+      {icon:'👤',label:'Attacker Profiles',  sub:'Behavioral fingerprints',            view:'attacker'},
+      {icon:'🤖',label:'AI Cyber Agent',     sub:'LLM-assisted workflows',             view:'aiagent'},
+      {icon:'📊',label:'Auto Reports',       sub:'Generate threat reports',            view:'reports'},
+      {icon:'🕐',label:'IP Activity Tracker',sub:'Timeline + honeypot correlation',    view:'iptrack'},
+      {icon:'🖥',label:'Asset Management',   sub:'Decoy + production asset register',  view:'assets'},
+      {icon:'🎫',label:'Security Tickets',   sub:'Incident tracking and response',     view:'tickets'},
+      {icon:'🛡',label:'Security & Guardrails',sub:'STRIDE model, isolation, RBAC',    view:'security'},
+      {icon:'📜',label:'Audit Log',          sub:'Immutable event stream',             view:'audit'},
+      {icon:'⚙',label:'Settings',           sub:'Platform config, API keys, license', view:'settings'},
+    ]},
+    { section:'Quick Actions', items:[
+      {icon:'🚀',label:'Deploy New Decoy',   sub:'Open builder and start deploy',      action:()=>{navSideById('honeypot');setTimeout(()=>typeof deployHP==='function'&&deployHP(),300);}},
+      {icon:'▶',label:'Run Threat Hunt',    sub:'Execute active query',               action:()=>{navSideById('threathunt');setTimeout(()=>typeof runHunt==='function'&&runHunt(),400);}},
+      {icon:'📦',label:'Export STIX',        sub:'Generate IOC bundle',                action:()=>toast('📦','p','STIX Export','1 409 IOCs bundled')},
+      {icon:'▶',label:'Run Security Gate',  sub:'Validate all deployment gates',      action:()=>{navSideById('security');setTimeout(()=>typeof runSecurityGate==='function'&&runSecurityGate(),300);}},
+      {icon:'📄',label:'Generate Report',    sub:'Create 24h threat summary',          action:()=>{navSideById('reports');setTimeout(()=>typeof generateReport==='function'&&generateReport(),300);}},
+    ]},
+  ];
+
+  let fIdx=0;
+  function flatItems(filter=''){
+    const flat=[];
+    groups.forEach(g=>{
+      const its=filter
+        ? g.items.filter(i=>i.label.toLowerCase().includes(filter.toLowerCase())||i.sub.toLowerCase().includes(filter.toLowerCase()))
+        : g.items;
+      if(its.length){ flat.push({section:g.section,items:its}); }
+    });
+    return flat;
+  }
+
+  function render(filter=''){
+    fIdx=0;
+    const r=document.getElementById('cmd-results');
+    const grouped=flatItems(filter);
+    if(!grouped.length){r.innerHTML='<div style="padding:28px;text-align:center;font-family:JetBrains Mono;font-size:11px;color:#352F52;">No results</div>';return;}
+    r.innerHTML=grouped.map(g=>`
+      <div class="cmd-section">${g.section}</div>
+      ${g.items.map((it,i)=>`
+        <div class="cmd-item" data-view="${it.view||''}" data-action="${it.action?'1':''}">
+          <span class="cmd-item-icon">${it.icon}</span>
+          <div style="flex:1;min-width:0;">
+            <div class="cmd-item-label">${it.label}</div>
+            <div class="cmd-item-sub">${it.sub}</div>
+          </div>
+          <span class="cmd-item-enter">↵</span>
+        </div>`).join('')}
+    `).join('');
+
+    // Bind clicks
+    r.querySelectorAll('.cmd-item').forEach((el,i)=>{
+      const allItems=[...groups.flatMap(g=>g.items)];
+      // Find which item this is
+      const matched=grouped.flatMap(g=>g.items);
+      el.addEventListener('click',()=>{execItem(matched[i]);close();});
+    });
+  }
+
+  function execItem(it){
+    if(it.view) navSideById(it.view);
+    else if(typeof it.action==='function') it.action();
+  }
+
+  function navSideById(v){
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(vv=>vv.classList.remove('active'));
+    const vEl=document.getElementById('view-'+v);if(vEl)vEl.classList.add('active');
+    document.getElementById('main').scrollTop=0;
+    const labels={overview:'Dashboard',honeypot:'Honeypot Builder',honeynet:'Honeynet Designer',breadcrumb:'Breadcrumb Trails',threathunt:'Threat Hunting',ioc:'IOC Intelligence',attacker:'Attacker Profiles',aiagent:'AI Cyber Agent',reports:'Auto Reports',iptrack:'IP Activity Tracker',assets:'Asset Management',tickets:'Security Tickets',security:'Security & Guardrails',audit:'Audit Log',settings:'Settings'};
+    const tb=document.getElementById('tb-section');if(tb)tb.textContent=labels[v]||v;
+  }
+
+  function open(){ov.style.display='flex';document.getElementById('cmd-input').focus();render();}
+  function close(){ov.style.display='none';document.getElementById('cmd-input').value='';}
+
+  document.getElementById('cmd-input').addEventListener('input',e=>render(e.target.value));
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='TEXTAREA') return;
+    if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();ov.style.display==='flex'?close():open();}
+    if(e.key==='Escape'){close();document.getElementById('kbd-overlay').style.display='none';}
+    if(e.target.tagName==='INPUT'&&e.target.id!=='cmd-input') return;
+    // number shortcuts (not in input)
+    if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT') return;
+    const vm={'1':'overview','2':'honeypot','3':'honeynet','4':'breadcrumb','5':'threathunt','6':'ioc','7':'attacker','8':'aiagent','9':'reports','0':'tickets'};
+    if(vm[e.key]){navSideById(vm[e.key]);}
+    if(e.key==='?'){const ko=document.getElementById('kbd-overlay');ko.style.display=ko.style.display==='flex'?'none':'flex';}
+  });
+  ov.addEventListener('click',e=>{if(e.target===ov)close();});
+})();
+
+/* ══════════════════════════════════════════════
+   KEYBOARD SHORTCUTS OVERLAY  ?
+══════════════════════════════════════════════ */
+(function(){
+  const ov=document.createElement('div');
+  ov.id='kbd-overlay';
+  const rows=[
+    ['⌘ K','Command palette'],['?','This overlay'],
+    ['1','Dashboard'],['2','Honeypot Builder'],
+    ['3','Honeynet'],['4','Breadcrumbs'],
+    ['5','Threat Hunting'],['6','IOC Intel'],
+    ['7','Attacker Profiles'],['8','AI Agent'],
+    ['9','Auto Reports'],['0','Tickets'],
+    ['Esc','Close overlay / palette'],['R','Run hunt (global)'],
+  ];
+  ov.innerHTML=`
+    <div id="kbd-box">
+      <div class="kbd-head">
+        <span class="kbd-title">KEYBOARD SHORTCUTS</span>
+        <span class="kbd-esc" onclick="this.closest('#kbd-overlay').style.display='none'">ESC</span>
+      </div>
+      <div class="kbd-grid">
+        ${rows.map(([k,d])=>`<div class="kbd-row"><span class="kbd-desc">${d}</span><span class="kbd-key">${k}</span></div>`).join('')}
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener('click',e=>{if(e.target===ov)ov.style.display='none';});
+})();
+
+/* ══════════════════════════════════════════════
+   3D TILT on stat cards
+══════════════════════════════════════════════ */
+(function(){
+  function tilt(el){
+    el.addEventListener('mousemove',e=>{
+      const r=el.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+      el.style.transform=`perspective(700px) rotateY(${x*7}deg) rotateX(${-y*7}deg) translateY(-2px)`;
+      el.style.transition='transform .05s';
+    });
+    el.addEventListener('mouseleave',()=>{
+      el.style.transform='';
+      el.style.transition='transform .45s ease';
+    });
+  }
+  function initTilts(){document.querySelectorAll('.stat-card').forEach(tilt);}
+  const obs=new MutationObserver(initTilts);
+  obs.observe(document.body,{childList:true,subtree:true});
+  setTimeout(initTilts,600);
+})();
+
+/* ══════════════════════════════════════════════
+   BUTTON RIPPLE
+══════════════════════════════════════════════ */
+(function(){
+  const sty=document.createElement('style');
+  sty.textContent='@keyframes rpl{to{transform:scale(3.5);opacity:0;}}';
+  document.head.appendChild(sty);
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('.btn');if(!btn)return;
+    const r=btn.getBoundingClientRect();
+    const sz=Math.max(r.width,r.height);
+    const rip=document.createElement('span');
+    rip.style.cssText=`position:absolute;border-radius:50%;
+      background:rgba(255,255,255,.15);pointer-events:none;
+      width:${sz}px;height:${sz}px;
+      left:${e.clientX-r.left-sz/2}px;top:${e.clientY-r.top-sz/2}px;
+      transform:scale(0);animation:rpl .55s ease-out forwards;`;
+    btn.style.position='relative';btn.style.overflow='hidden';
+    btn.appendChild(rip);setTimeout(()=>rip.remove(),600);
+  });
+})();
+
+/* ══════════════════════════════════════════════
+   GLOBAL THREAT MAP — Mercator arc canvas
+   Appended into Dashboard view
+══════════════════════════════════════════════ */
+(function(){
+  const dash=document.getElementById('view-overview');if(!dash)return;
+  const card=document.createElement('div');
+  card.id='geo-card';
+  card.innerHTML=`
+    <div class="card-head" style="padding:13px 16px 12px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:10px;">
+      <div class="card-head-icon chi-da">🌍</div>
+      <div class="card-head-text">
+        <div class="card-head-title">Global Attack Origins</div>
+        <div class="card-head-sub">Live geo-distribution of attacker IPs</div>
+      </div>
+      <span class="badge b-da"><span class="b-dot blink"></span>LIVE</span>
+    </div>
+    <div style="padding:14px 16px 10px;position:relative;">
+      <canvas id="geo-c" style="width:100%;height:170px;display:block;border-radius:8px;background:#050410;border:1px solid rgba(124,58,237,.08);"></canvas>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 16px 13px;flex-wrap:wrap;">
+      <span class="badge b-da">🇩🇪 DE/Tor — 347 hits</span>
+      <span class="badge b-da">🇷🇺 RU — 214 hits</span>
+      <span class="badge b-da">🇨🇳 CN — 156 hits</span>
+      <span class="badge b-am">🇺🇸 US/VPN — 89 hits</span>
+      <span class="badge b-am">🇳🇱 NL — 67 hits</span>
+    </div>`;
+  dash.appendChild(card);
+
+  function drawGeo(){
+    const canvas=document.getElementById('geo-c');if(!canvas)return;
+    const dpr=window.devicePixelRatio||1;
+    canvas.width=canvas.clientWidth*dpr;
+    canvas.height=170*dpr;
+    const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
+
+    // Background
+    const bg=ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#06040F');bg.addColorStop(1,'#040310');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+    // Grid
+    ctx.strokeStyle='rgba(124,58,237,.05)';ctx.lineWidth=1;
+    for(let x=0;x<W;x+=W/14){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=H/7){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+    function ll(lat,lon){
+      const x=((lon+180)/360)*W;
+      const lr=lat*Math.PI/180;
+      const y=H/2-(W*Math.log(Math.tan(Math.PI/4+lr/2))/(2*Math.PI));
+      return[x,Math.max(4,Math.min(H-4,y))];
+    }
+
+    const origins=[
+      {lat:51.16,lon:10.45,label:'DE',hits:347,c:'#EF4444'},
+      {lat:55.75,lon:37.62,label:'RU',hits:214,c:'#EF4444'},
+      {lat:39.9, lon:116.4,label:'CN',hits:156,c:'#EF4444'},
+      {lat:37.09,lon:-95.7,label:'US',hits:89, c:'#F59E0B'},
+      {lat:52.37,lon:4.90, label:'NL',hits:67, c:'#F59E0B'},
+    ];
+    const [tx,ty]=ll(50.08,14.43); // Prague
+
+    origins.forEach(o=>{
+      const[ox,oy]=ll(o.lat,o.lon);
+      const cpx=(ox+tx)/2, cpy=Math.min(oy,ty)-Math.abs(tx-ox)*.22;
+      // Arc beam
+      ctx.save();
+      ctx.globalAlpha=.7;
+      ctx.strokeStyle=o.c;
+      ctx.lineWidth=Math.max(.8,o.hits/160);
+      ctx.setLineDash([5,7]);
+      ctx.beginPath();ctx.moveTo(ox,oy);ctx.quadraticCurveTo(cpx,cpy,tx,ty);ctx.stroke();
+      ctx.setLineDash([]);ctx.restore();
+      // Origin dot
+      const dr=Math.max(4,Math.min(9,o.hits/42));
+      ctx.save();ctx.shadowColor=o.c;ctx.shadowBlur=12;
+      ctx.fillStyle=o.c;ctx.beginPath();ctx.arc(ox,oy,dr,0,Math.PI*2);ctx.fill();ctx.restore();
+      // Label
+      ctx.fillStyle='#9D98C0';
+      ctx.font=`bold ${Math.round(9.5*dpr)}px "JetBrains Mono"`;
+      ctx.textAlign='center';ctx.textBaseline='bottom';
+      ctx.fillText(o.label,ox,oy-dr-3);
+    });
+
+    // Target HQ (Prague)
+    ctx.save();ctx.shadowColor='#7C3AED';ctx.shadowBlur=18;
+    ctx.fillStyle='#7C3AED';ctx.beginPath();ctx.arc(tx,ty,7,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+    ctx.fillStyle='#A78BFA';ctx.font=`bold ${Math.round(9*dpr)}px "JetBrains Mono"`;
+    ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText('HQ',tx,ty-9);
+
+    // Animate pulse on HQ
+    let ph=0;
+    function pulse(){
+      if(!document.getElementById('geo-c'))return;
+      ph=(ph+.04)%(Math.PI*2);
+      ctx.save();
+      ctx.globalAlpha=.2+.15*Math.sin(ph);
+      ctx.strokeStyle='#7C3AED';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.arc(tx,ty,9+5*Math.sin(ph),0,Math.PI*2);ctx.stroke();
+      ctx.restore();
+      requestAnimationFrame(pulse);
+    }
+    pulse();
+  }
+  setTimeout(drawGeo,500);
+  window.addEventListener('resize',()=>setTimeout(drawGeo,100));
+})();
+
+/* Honeynet animation handled by unified drawNet() above */
+
+/* ══════════════════════════════════════════════
+   ⌘K HINT in topbar
+══════════════════════════════════════════════ */
+(function(){
+  const right=document.querySelector('.topbar-right');if(!right)return;
+  const h=document.createElement('div');
+  h.className='cmdk-hint';h.title='Command Palette';
+  h.innerHTML=`<span class="cmdk-key">⌘</span><span class="cmdk-key">K</span>`;
+  h.addEventListener('click',()=>document.dispatchEvent(new KeyboardEvent('keydown',{key:'k',ctrlKey:true,bubbles:true})));
+  right.insertBefore(h,right.firstChild);
+})();
+
+/* ══════════════════════════════════════════════
+   AUTO PERIODIC ALERTS (realistic, not too fast)
+══════════════════════════════════════════════ */
+(function(){
+  const pool=[
+    ['☠','da','CRIT — Brute Force','185.220.101.45 · 500+ SSH attempts in 2 min'],
+    ['🍞','am','Breadcrumb Triggered','Attacker read .env lure at /home/admin'],
+    ['🔔','p', 'IOC Collected','domain: c2-exfil-node.ru · confidence 94%'],
+    ['🎫','p', 'Ticket Auto-Created','TKT-1044 · lateral movement attempt'],
+    ['🌱','em','Session Ended','SSH session 22 min · 4.1 MB recorded'],
+    ['📜','em','Audit Probe OK','Hash chain valid · 147 events / 24h'],
+  ];
+  let idx=0;
+  setInterval(()=>{
+    if(document.hidden)return;
+    const a=pool[idx++%pool.length];
+    if(typeof toast==='function') toast(a[0],a[1],a[2],a[3]);
+  },28000);
+})();
+</script>
+</body>
+</html>
