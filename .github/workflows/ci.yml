@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  repository-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repozitáře
+        uses: actions/checkout@v4
+
+      - name: Kontrola struktury repozitáře
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f README.md
+          test -f MVP_PLAN.md
+          test -f ARCHITECTURE.md
+          test -f DATA_MODEL.md
+          test -f API.md
+          test -f SECURITY.md
+          test -f DEVELOPMENT.md
+          test -f TESTING.md
+          test -f LLM_PLAN.md
+
+      - name: Kontrola zakázaných placeholderů
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RInE '\b(TODO|FIXME|your_|YOUR_|CHANGE_ME|example\.com)\b' --exclude-dir=.git .; then
+            echo "Nalezen nepovolený vývojový placeholder."
+            exit 1
+          fi
