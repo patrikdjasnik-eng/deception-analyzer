@@ -1,19 +1,56 @@
 :root {
-  font-family: Inter, system-ui, sans-serif;
-  color: #f5f7fa;
-  background: #080b10;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  color: #EDEAF8;
+  background: #06050A;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  --void: #06050A;
+  --s0: #0B0A12;
+  --s1: #110F1C;
+  --s2: #181628;
+  --s3: #201E35;
+  --s4: #2A2845;
+  --p: #7C3AED;
+  --p-lo: rgba(124, 58, 237, .08);
+  --p-mid: rgba(124, 58, 237, .18);
+  --p-hi: rgba(124, 58, 237, .40);
+  --p-glow: 0 0 20px rgba(124, 58, 237, .45);
+  --em: #10B981;
+  --da: #EF4444;
+  --am: #F59E0B;
+  --t1: #EDEAF8;
+  --t2: #9D98C0;
+  --t3: #58527A;
+  --t4: #352F52;
+  --mono: 'JetBrains Mono', monospace;
+  --r: 6px;
+  --r-lg: 10px;
+  --r-xl: 14px;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+html,
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
+  overflow: hidden;
+  background: var(--void);
+}
+
+body {
+  color: var(--t1);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 button,
@@ -22,35 +59,180 @@ textarea {
   font: inherit;
 }
 
-.app {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 24px;
+button {
+  color: inherit;
 }
 
-.appCard {
-  width: min(720px, 100%);
-  padding: 40px;
-  border: 1px solid rgb(255 255 255 / 10%);
-  border-radius: 24px;
-  background: rgb(255 255 255 / 4%);
+.app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.chat {
+  width: min(720px, calc(100% - 32px));
+  height: min(760px, calc(100% - 32px));
+  margin: auto;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  border: 1px solid rgba(124, 58, 237, .18);
+  border-radius: var(--r-xl);
+  background: var(--s1);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .35), var(--p-glow);
+}
+
+.chatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(124, 58, 237, .10);
+  background: var(--s0);
+}
+
+.chatHeader h2 {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chatHeader button,
+.chatForm button {
+  border: 1px solid var(--p-hi);
+  border-radius: var(--r);
+  background: var(--p-mid);
+  color: var(--t1);
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.chatHeader button {
+  padding: 7px 10px;
+}
+
+.chatHeader button:hover,
+.chatForm button:hover:not(:disabled) {
+  background: rgba(124, 58, 237, .28);
+  box-shadow: 0 0 8px rgba(124, 58, 237, .35);
+}
+
+.chatHeader button:disabled,
+.chatForm button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
 }
 
 .eyebrow {
-  color: #8d98a8;
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
+  color: var(--t3);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
 }
 
-h1 {
-  margin: 12px 0 8px;
-  font-size: clamp(2rem, 6vw, 4rem);
-  line-height: 1;
+.chatMessages {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px;
 }
 
-p {
+.chatEmpty,
+.chatStatus,
+.chatError {
   margin: 0;
-  color: #9ca7b7;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.chatEmpty,
+.chatStatus {
+  color: var(--t3);
+}
+
+.chatError {
+  margin-top: 10px;
+  color: var(--da);
+}
+
+.message {
+  max-width: 82%;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border: 1px solid rgba(124, 58, 237, .10);
+  border-radius: var(--r-lg);
+  background: var(--s2);
+}
+
+.message span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--t3);
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.message p {
+  color: var(--t2);
+  white-space: pre-wrap;
+}
+
+.message-user {
+  margin-left: auto;
+  border-color: var(--p-hi);
+  background: var(--p-lo);
+}
+
+.message-user p {
+  color: var(--t1);
+}
+
+.chatForm {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid rgba(124, 58, 237, .10);
+  background: var(--s0);
+}
+
+.chatForm textarea {
+  min-width: 0;
+  resize: vertical;
+  border: 1px solid rgba(124, 58, 237, .18);
+  border-radius: var(--r);
+  outline: none;
+  padding: 9px 10px;
+  background: var(--s2);
+  color: var(--t1);
+}
+
+.chatForm textarea:focus {
+  border-color: var(--p-hi);
+  box-shadow: 0 0 8px rgba(124, 58, 237, .18);
+}
+
+.chatForm button {
+  align-self: end;
+  padding: 9px 14px;
+}
+
+@media (max-width: 640px) {
+  .chat {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .chatForm {
+    grid-template-columns: 1fr;
+  }
+
+  .chatForm button {
+    width: 100%;
+  }
 }
