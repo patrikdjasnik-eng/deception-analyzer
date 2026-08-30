@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 
-import { sendChatMessage, type ChatMessage } from '../services/api';
+import type { ChatMessage } from '../services/api';
+import { streamChatMessage } from '../services/streamChat';
 
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -19,17 +20,25 @@ export function useChat() {
       { role: 'user', content: trimmedContent },
     ];
 
-    setMessages(nextMessages);
+    setMessages([
+      ...nextMessages,
+      { role: 'assistant', content: '' },
+    ]);
     setError(null);
     setIsLoading(true);
 
     try {
-      const result = await sendChatMessage(nextMessages);
-      setMessages([
-        ...nextMessages,
-        { role: 'assistant', content: result.content },
-      ]);
+      let assistantContent = '';
+
+      await streamChatMessage(nextMessages, (token) => {
+        assistantContent += token;
+        setMessages([
+          ...nextMessages,
+          { role: 'assistant', content: assistantContent },
+        ]);
+      });
     } catch (requestError) {
+      setMessages(nextMessages);
       setError(
         requestError instanceof Error
           ? requestError.message
