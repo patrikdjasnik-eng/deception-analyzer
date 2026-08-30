@@ -8,7 +8,7 @@
 
 RabbitHollow dostane vlastní AI vrstvu, která bude dostupná přímo v platformě a bude pracovat s kontextem aktuálního security prostředí.
 
-První model bude **Qwen2.5-Coder 7B**. Po stabilizaci celé AI vrstvy bude možné přidat silnější **Qwen2.5-Coder 14B** bez změny frontendového chat interface a bez přepisování agent architecture.
+První produkční integrační model bude **Qwen2.5-Coder 7B**. Model **Qwen2.5-Coder 14B už byl samostatně spuštěn a ověřen na localhostu**, takže jeho pozdější integrace nebude začínat od ověřování samotného LLM runtime.
 
 AI nebude pouze samostatný chatbot. Cílem je agent schopný bezpečně pracovat s RabbitHollow daty, nástroji a workflow.
 
@@ -42,7 +42,7 @@ Výhodou je nižší hardware náročnost a rychlejší inference.
 
 ### Qwen2.5-Coder 14B
 
-14B bude přidán jako druhý model až po stabilizaci 7B stacku.
+14B už prošel prvním samostatným spuštěním na localhostu. Jeho integrace do RabbitHollow přijde až po stabilizaci 7B AI stacku.
 
 Použití:
 
@@ -106,7 +106,21 @@ Důvod:
 
 RabbitHollow backend bude komunikovat s LLM přes interní HTTP API. Model runtime nebude přímo přístupný z browseru.
 
-Příklad interního rozložení:
+Ověřený základ pro 14B už existuje:
+
+```text
+Local client
+    ↓
+localhost
+    ↓
+llama-server
+    ↓
+Qwen2.5-Coder 14B GGUF
+```
+
+Tento ověřený runtime později pouze zapojíme za stejný backend adapter, který bude používat 7B.
+
+Příklad cílového rozložení:
 
 ```text
 Browser
@@ -301,14 +315,14 @@ interface ModelConfig {
 Příklad logiky:
 
 ```text
-simple chat       → 7B
-IOC lookup        → 7B
-query assistance  → 7B
-basic triage      → 7B
+simple chat        → 7B
+IOC lookup         → 7B
+query assistance   → 7B
+basic triage       → 7B
 
-complex analysis  → 14B
+complex analysis   → 14B
 long investigation → 14B
-complex report    → 14B
+complex report     → 14B
 ```
 
 Routing může být nejprve manuální přes konfiguraci a později automatizovaný podle complexity score.
@@ -365,7 +379,7 @@ Do databáze se nemají ukládat celé citlivé prompt contexty automaticky. Ret
 
 ## 🧪 Evaluation
 
-Před přechodem ze 7B na 14B musí existovat testovací sada.
+Před aktivním používáním agenta musí existovat testovací sada.
 
 Testy musí pokrývat:
 
@@ -388,13 +402,16 @@ Stejný evaluation dataset se použije pro 7B i 14B, aby bylo možné porovnat k
 
 ## 🚀 Deployment postup
 
-### Fáze 1 — Local model
+### Fáze 1 — Ověřený local runtime
 
-1. Připravit GGUF Qwen2.5-Coder 7B.
-2. Spustit `llama-server`.
-3. Ověřit OpenAI-compatible API.
-4. Otestovat inference mimo RabbitHollow.
-5. Nastavit základní model parameters.
+**14B už tuto fázi absolvoval.**
+
+1. GGUF model byl lokálně připraven.
+2. `llama-server` byl spuštěn.
+3. Localhost inference byla ověřena.
+4. OpenAI-compatible runtime je ověřený základ pro další integraci.
+
+Pro 7B se stejný postup zopakuje s cílem připravit hlavní MVP model.
 
 ### Fáze 2 — Backend adapter
 
@@ -459,13 +476,13 @@ Otestovat:
 - denial of service
 - context poisoning
 
-### Fáze 7 — 14B
+### Fáze 7 — 14B integration
 
-Teprve po stabilizaci 7B:
+Po stabilizaci 7B:
 
-1. Přidat Qwen2.5-Coder 14B.
+1. Zapojit už ověřený Qwen2.5-Coder 14B runtime přes stejný `llm` adapter.
 2. Přidat model configuration.
-3. Otestovat inference performance.
+3. Otestovat inference performance v rámci aplikace.
 4. Spustit stejný evaluation dataset.
 5. Porovnat 7B vs 14B.
 6. Přidat model routing.
@@ -499,7 +516,7 @@ Pro lokální inference je potřeba měřit:
 - CPU usage
 - concurrent requests
 
-14B bude nasazen až po ověření, že hardware a inference runtime poskytují přijatelný výkon.
+14B už má ověřenou základní local inference. Před jeho integrací do routingu se ale musí změřit výkon přímo v RabbitHollow workflow.
 
 ## 🧱 Definition of Done
 
@@ -517,7 +534,7 @@ LLM MVP je hotové, když:
 - prompt injection z nedůvěryhodných dat je ošetřený
 - AI nemá shell, firewall ani production deployment access
 - existuje evaluation suite
-- 14B lze později přidat pouze změnou model configuration/routeru
+- již ověřený 14B lze přidat přes stejný model adapter/router
 
 ## Pozdější rozšíření
 
