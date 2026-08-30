@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { streamChatMessage } from '../services/streamChat';
 import { useChat } from './useChat';
@@ -9,6 +9,10 @@ vi.mock('../services/streamChat', () => ({
 }));
 
 describe('useChat', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('přidá uživatelskou zprávu a streamovanou odpověď AI', async () => {
     vi.mocked(streamChatMessage).mockImplementation(async (_messages, onToken) => {
       onToken('Ahoj');
@@ -41,7 +45,9 @@ describe('useChat', () => {
   });
 
   it('vrátí chybu při selhání streamu', async () => {
-    vi.mocked(streamChatMessage).mockRejectedValueOnce(new Error('LLM server není dostupný.'));
+    vi.mocked(streamChatMessage).mockRejectedValueOnce(
+      new Error('LLM server není dostupný.'),
+    );
 
     const { result } = renderHook(() => useChat());
 
