@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from app.routers.ai import router as ai_router
+
 
 class HealthResponse(BaseModel):
   status: str
@@ -16,6 +18,8 @@ app.add_middleware(
   allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
   allow_headers=["*"],
 )
+
+app.include_router(ai_router)
 
 
 @app.get("/health", response_model=HealthResponse)
