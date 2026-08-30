@@ -1,59 +1,98 @@
-# RabbitHollow — Deception Intelligence Platform
+# RabbitHollow
 
-RabbitHollow je dashboard pro monitoring a řízení deception infrastruktury. Projekt kombinuje honeypoty, honeynet, threat hunting, IOC intelligence, attacker profiling, audit, security guardrails a AI-assisted workflows v jednom rozhraní.
+### Deception Intelligence Platform
 
-## Přehled
+> Security platform for monitoring, analyzing and managing deception infrastructure.
 
-Aplikace je postavená jako single-page frontend s tmavým security-oriented UI. Data a některé operace jsou v aktuální verzi simulované (mock), aby bylo možné celý workflow provozovat bez přístupu k produkční infrastruktuře.
+[![Status](https://img.shields.io/badge/status-MVP%20development-7C3AED?style=flat-square)](./MVP_PLAN.md)
+[![Frontend](https://img.shields.io/badge/frontend-React%20%2B%20TypeScript-61DAFB?style=flat-square)](./MVP_PLAN.md)
+[![Backend](https://img.shields.io/badge/backend-FastAPI-009688?style=flat-square)](./MVP_PLAN.md)
+[![Database](https://img.shields.io/badge/database-PostgreSQL-4169E1?style=flat-square)](./MVP_PLAN.md)
 
-Hlavní části aplikace:
+RabbitHollow je security dashboard pro deception operations. Spojuje honeypoty, honeynet, threat hunting, IOC intelligence, attacker profiling, incident ticketing, security guardrails, audit a AI-assisted workflows do jednoho rozhraní.
 
-- Dashboard — přehled aktivních honeypotů, zachycených intrusion, attacker IPs, IOCs, risk indexu, MITRE ATT&CK coverage a live event feedu
-- Honeypot Builder — konfigurace a deployment deception nodes pro SSH, FTP, MySQL, HTTP, RDP, SMB, SMTP, Modbus a Kubernetes
-- Honeynet Designer — network topology, VLAN/subnet konfigurace, segment roles a isolation controls
-- Breadcrumb Trails — vytváření lure trails, canarytokenů a sledování jejich aktivace
-- Threat Hunting — SPL, KQL, Sigma a SQL query workflow, detection rules a MITRE ATT&CK coverage
-- IOC Intelligence — vyhledávání a filtrování IP adres, domén, hashů, URL a dalších indicators of compromise
-- Attacker Profiles — behavioral fingerprints vytvořené z honeypot sessions
-- AI Cyber Agent — mock LLM workflows pro incident triage, IOC correlation, ticket drafting, reporting a containment advice
-- Auto Reports — generování threat reportů a opt-in výběr anonymizovaných dat pro AI training
-- IP Activity Tracker — korelace aktivity podle IP adres a časová osa událostí
-- Asset Management — evidence zařízení a jejich technických informací
-- Security Ticketing — incident tickets, investigation notes a změna stavu ticketů
-- Security & Guardrails — STRIDE-aligned threat model, isolation guarantees, honeytoken policy, deployment gates a RBAC
-- Audit Log — append-only event stream, integrity status a compliance mapping
-- Settings — alerting, threat intelligence feeds, API keys a license configuration
+Současná podoba projektu vychází z frontend prototypu `rabbithollow-v3_4.html`. Prototyp obsahuje kompletní UI koncept, navigaci a hlavní workflow, přičemž část dat a operací je zatím simulovaná.
 
-## Bezpečnostní model
+## Platforma
 
-Deception prostředí je v návrhu oddělené od produkční infrastruktury. Projekt počítá s network isolation, deny-by-default egress, namespace/cgroup isolation, syntetickými credentials a DNS sinkholingem.
+| Modul | Účel |
+| --- | --- |
+| Dashboard | Přehled honeypotů, intrusion, attacker IPs, IOCs, risku a live eventů |
+| Honeypot Builder | Konfigurace deception nodes a deployment workflow |
+| Honeynet Designer | Topologie, segmentace a isolation controls |
+| Breadcrumb Trails | Lures, canarytokens a sledování jejich aktivace |
+| Threat Hunting | SPL, KQL, Sigma a SQL workflow |
+| IOC Intelligence | Evidence a analýza indicators of compromise |
+| Attacker Profiles | Behavioral fingerprints a korelace aktivit |
+| AI Cyber Agent | Incident triage, IOC correlation, ticket drafting a security assistance |
+| Auto Reports | Threat summaries a reporting workflow |
+| IP Activity Tracker | Timeline IP aktivit a korelace s honeypoty |
+| Asset Management | Evidence produkčních a decoy assets |
+| Security Tickets | Incident tracking, investigation notes a response workflow |
+| Security & Guardrails | RBAC, isolation, deployment gates a bezpečnostní policy |
+| Audit Log | Append-only audit trail a integrity monitoring |
+| Settings | Alerting, threat intelligence a platform configuration |
 
-High-risk deception nodes (RDP, SMB, Industrial a Kubernetes) vyžadují dual-control approval. AI workflow pracuje pouze se syntetickými daty a v mock režimu nemá shell, deployment ani firewall access.
+## Security model
 
-Honeytokeny jsou navržené jako syntetické a sledovatelné. Produkční credentials a reálné PII nemají být součástí lure dat.
+Deception infrastruktura je navržená jako oddělené prostředí s důrazem na isolation a bezpečné workflow.
 
-## UI a interakce
+Klíčové principy:
 
-Rozhraní používá Space Grotesk pro UI a JetBrains Mono pro technická data. Hlavní vizuální systém používá tmavé vrstvy, fialový accent a barevné stavy pro danger, warning, success a informational data.
+- deny-by-default egress
+- network a workload isolation
+- synthetic credentials
+- honeytoken policy
+- DNS sinkholing
+- RBAC
+- server-side security gates
+- dual-control approval pro high-risk deception nodes
+- append-only audit trail
+- human review pro AI-assisted security actions
 
-Součástí UI jsou například:
+AI workflow v MVP nebude mít přímý shell, firewall ani production deployment access.
+
+## Interface
+
+UI je postavené jako dark security-oriented single-page interface. Vizuální systém používá Space Grotesk pro UI, JetBrains Mono pro technická data a výrazný purple accent.
+
+Součástí původního rozhraní jsou například:
 
 - live event feed
-- animated threat ticker
+- threat ticker
 - risk gauge
 - MITRE ATT&CK matrix
-- honeynet canvas topology
+- honeynet topology canvas
 - global attacker-origin map
-- terminal-style configuration previews
+- terminal-style configuration preview
 - animated stat cards
 - command palette
 - keyboard shortcuts
 - toast notifications
 
-Navigace podporuje command palette přes `Ctrl+K` / `⌘K`, číselné keyboard shortcuts a globální akce.
+Cílem MVP je zachovat tento vizuální koncept a jeho hlavní workflow **1:1** při postupném nahrazování mock logiky skutečným backendem.
 
-## Aktuální stav
+## Architecture
 
-Současná verze je frontendový prototype. Deployment, threat feeds, SIEM integrace, API calls, firewall actions a LLM operace jsou v UI reprezentované jako mock workflows nebo advisory actions.
+```mermaid
+flowchart LR
+  UI[React + TypeScript] --> API[FastAPI]
+  API --> DB[(PostgreSQL)]
+  API --> AI[AI Agent]
+  API --> AUDIT[Audit Log]
+  API --> INTEL[Threat Intelligence]
+```
 
-Další vývoj bude směřovat k oddělení frontendu od backendu a postupnému napojení skutečných datových zdrojů při zachování současného UI a jeho chování.
+## MVP
+
+MVP je rozdělené do postupných fází od převodu současného frontendu přes backend, persistence a RBAC až po deception management, intelligence, audit, AI a reporting.
+
+Podrobný plán je v [`MVP_PLAN.md`](./MVP_PLAN.md).
+
+## Current status
+
+🚧 **MVP development**
+
+Aktuální základ je frontendový prototype. Deployment, threat feeds, SIEM integrace, API calls, firewall actions a LLM operace jsou zatím reprezentované mock nebo advisory workflow.
+
+Dalším krokem je postupný převod prototypu na skutečnou aplikaci při zachování jeho současného UI.
