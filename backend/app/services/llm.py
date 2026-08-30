@@ -1,3 +1,4 @@
+from collections.abc import AsyncIterator
 from typing import Any
 
 import httpx
@@ -21,10 +22,7 @@ class LlmService:
       return False
 
   async def chat(self, messages: list[dict[str, str]]) -> dict[str, Any]:
-    payload = {
-      "messages": messages,
-      "stream": False,
-    }
+    payload = {"messages": messages, "stream": False}
 
     try:
       async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -34,5 +32,28 @@ class LlmService:
         )
         response.raise_for_status()
         return response.json()
+    except (httpx.HTTPError, httpx.TimeoutException) as error:
+      raise RuntimeError("LLM server není dostupný.") from error
+
+  async def chat_stream(
+    self,
+    messages: list[dict[str, str]],
+  ) -> AsyncIterator[str]:
+    payload = {"messages": messages, "stream": True}
+
+    try:
+      async with httpx.AsyncClient(timeout=self.timeout) as client:
+        async with client.stream(
+          "POST",
+          f"{self.base_url}/v1/chat/completions",
+          json=payload,
+        ) as response:
+          response.raise_for_status()
+          async for line in response.aiter_lines():
+            if line.startswith("data: "):
+              data = line[6:]
+              if data == "[DONE]":
+                break
+              yield data
     except (httpx.HTTPError, httpx.TimeoutException) as error:
       raise RuntimeError("LLM server není dostupný.") from error
