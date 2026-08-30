@@ -39,6 +39,43 @@ describe('streamChatMessage', () => {
     expect(tokens).toEqual(['Aho', 'j']);
   });
 
+  it('zpracuje událost rozdělenou mezi síťové chunky', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      createStreamResponse([
+        'data: {"choices":[{"delta":{"con',
+        'tent":"test"}}]}\n\n',
+        'data: [DONE]\n\n',
+      ]),
+    ));
+
+    const tokens: string[] = [];
+
+    await streamChatMessage(
+      [{ role: 'user', content: 'test' }],
+      (token) => tokens.push(token),
+    );
+
+    expect(tokens).toEqual(['test']);
+  });
+
+  it('ignoruje prázdné SSE události a [DONE]', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      createStreamResponse([
+        '\n\n',
+        'data: [DONE]\n\n',
+      ]),
+    ));
+
+    const onToken = vi.fn();
+
+    await streamChatMessage(
+      [{ role: 'user', content: 'test' }],
+      onToken,
+    );
+
+    expect(onToken).not.toHaveBeenCalled();
+  });
+
   it('odmítne neúspěšný HTTP response', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
       new Response(null, { status: 503 }),
