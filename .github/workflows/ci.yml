@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -RInE '\b(TODO|FIXME|your_|YOUR_|CHANGE_ME|example\.com)\b' --exclude-dir=.git .; then
+          if git grep -nE '\b(TODO|FIXME|your_|YOUR_|CHANGE_ME|example\.com)\b' -- ':!.github/workflows/ci.yml'; then
             echo "Nalezen nepovolený vývojový placeholder."
             exit 1
           fi
