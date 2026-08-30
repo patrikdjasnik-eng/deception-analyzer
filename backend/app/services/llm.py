@@ -10,6 +10,7 @@ class LlmService:
   def __init__(self) -> None:
     settings = get_settings()
     self.base_url = settings.llm_base_url.rstrip("/")
+    self.model = settings.llm_model
     self.timeout = settings.llm_timeout_seconds
 
   async def health(self) -> bool:
@@ -22,7 +23,11 @@ class LlmService:
       return False
 
   async def chat(self, messages: list[dict[str, str]]) -> dict[str, Any]:
-    payload = {"messages": messages, "stream": False}
+    payload = {
+      "model": self.model,
+      "messages": messages,
+      "stream": False,
+    }
 
     try:
       async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -39,7 +44,11 @@ class LlmService:
     self,
     messages: list[dict[str, str]],
   ) -> AsyncIterator[str]:
-    payload = {"messages": messages, "stream": True}
+    payload = {
+      "model": self.model,
+      "messages": messages,
+      "stream": True,
+    }
 
     try:
       async with httpx.AsyncClient(timeout=self.timeout) as client:
