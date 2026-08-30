@@ -1,4 +1,7 @@
+import json
+
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.services.llm import LlmService
@@ -28,3 +31,22 @@ async def chat(request: ChatRequest) -> ChatResponse:
     ) from error
   except RuntimeError as error:
     raise HTTPException(status_code=503, detail=str(error)) from error
+
+
+@router.post("/chat/stream")
+async def chat_stream(request: ChatRequest) -> StreamingResponse:
+  messages = [message.model_dump() for message in request.messages]
+
+  async def generate():
+    try:
+      async for chunk in llm_service.chat_stream(messages):
+        yield f"data: {chunk}\n\n"
+      yield "data: [DONE]\n\n"
+    except RuntimeError as error:
+      yield f"event: error\ndata: {json.dumps(str(error))}\n\n"
+
+  return StreamingResponse(
+    generate(),
+    media_type="text/event-stream",
+    headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+  )
