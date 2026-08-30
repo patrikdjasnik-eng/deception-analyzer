@@ -19,7 +19,7 @@ class LlmService:
         response = await client.get(f"{self.base_url}/health")
         response.raise_for_status()
         return True
-    except (httpx.HTTPError, httpx.TimeoutException):
+    except httpx.HTTPError:
       return False
 
   async def chat(self, messages: list[dict[str, str]]) -> dict[str, Any]:
@@ -37,7 +37,7 @@ class LlmService:
         )
         response.raise_for_status()
         return response.json()
-    except (httpx.HTTPError, httpx.TimeoutException) as error:
+    except httpx.HTTPError as error:
       raise RuntimeError("LLM server není dostupný.") from error
 
   async def chat_stream(
@@ -64,5 +64,5 @@ class LlmService:
               if data == "[DONE]":
                 break
               yield data
-    except (httpx.HTTPError, httpx.TimeoutException) as error:
+    except httpx.HTTPError as error:
       raise RuntimeError("LLM server není dostupný.") from error
