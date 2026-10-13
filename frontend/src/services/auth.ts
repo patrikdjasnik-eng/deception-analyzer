@@ -3,7 +3,10 @@ export interface AuthSession {
   csrfToken: string;
 }
 
-const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8000';
+const localApiUrl = window.location.hostname === 'localhost'
+  ? 'http://localhost:8000'
+  : 'http://127.0.0.1:8000';
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? localApiUrl;
 
 async function parseError(response: Response): Promise<string> {
   try {

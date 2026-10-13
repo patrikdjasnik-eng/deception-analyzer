@@ -66,7 +66,7 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
 
       yield "data: [DONE]\n\n"
     except RuntimeError as error:
-      yield f"event: error\ndata: {json.dumps(str(error))}\n\n"
+      yield f"event: error\ndata: {json.dumps(str(error), ensure_ascii=False)}\n\n"
 
   return StreamingResponse(
     generate(),
