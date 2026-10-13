@@ -203,3 +203,12 @@ button { color: inherit; }
   outline: 2px solid var(--p, #7c3aed);
   outline-offset: 2px;
 }
+
+
+.empty-telemetry {
+  width: 100%;
+  padding: 22px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--t2, #9d98c0);
+}
