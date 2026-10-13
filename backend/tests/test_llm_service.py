@@ -50,3 +50,19 @@ async def test_health_pri_vypadku_llm_vrati_false() -> None:
     client.get = AsyncMock(side_effect=httpx.ConnectError("offline"))
 
     assert await service.health() is False
+
+
+@pytest.mark.asyncio
+async def test_health_requires_installed_model() -> None:
+  service = LlmService()
+  response = MagicMock()
+  response.raise_for_status.return_value = None
+  response.json.return_value = {"models": [{"name": "other-model:latest"}]}
+
+  with patch("app.services.llm.httpx.AsyncClient") as client_class:
+    client = client_class.return_value.__aenter__.return_value
+    client.get = AsyncMock(return_value=response)
+    assert await service.health() is False
+
+    response.json.return_value = {"models": [{"name": service.model}]}
+    assert await service.health() is True
