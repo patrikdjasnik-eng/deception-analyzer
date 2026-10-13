@@ -28,8 +28,18 @@ class LlmService:
       async with httpx.AsyncClient(timeout=10) as client:
         response = await client.get(f"{self.base_url}/api/tags")
         response.raise_for_status()
-        return True
-    except httpx.HTTPError:
+        data = response.json()
+        models = data.get("models", [])
+
+        if not isinstance(models, list):
+          return False
+
+        return any(
+          isinstance(model, dict)
+          and (model.get("name") == self.model or model.get("model") == self.model)
+          for model in models
+        )
+    except (httpx.HTTPError, ValueError, TypeError, AttributeError):
       return False
 
   async def chat(self, messages: list[dict[str, str]]) -> dict[str, Any]:
@@ -54,13 +64,19 @@ class LlmService:
         ) as response:
           response.raise_for_status()
 
+          complete = False
+
           async for line in response.aiter_lines():
             if line.startswith("data: "):
               data = line[6:]
 
               if data == "[DONE]":
+                complete = True
                 break
 
               yield data
+
+          if not complete:
+            raise RuntimeError("LLM stream skončil předčasně.")
     except httpx.HTTPError as error:
       raise RuntimeError("LLM server není dostupný.") from error
