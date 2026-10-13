@@ -19,7 +19,7 @@ describe('useChat', () => {
       onToken(' světe');
     });
 
-    const { result } = renderHook(() => useChat());
+    const { result } = renderHook(() => useChat('test-csrf'));
 
     await act(async () => {
       await result.current.sendMessage('Test');
@@ -34,7 +34,7 @@ describe('useChat', () => {
   });
 
   it('odmítne prázdnou zprávu', async () => {
-    const { result } = renderHook(() => useChat());
+    const { result } = renderHook(() => useChat('test-csrf'));
 
     await act(async () => {
       await result.current.sendMessage('   ');
@@ -49,7 +49,7 @@ describe('useChat', () => {
       new Error('LLM server není dostupný.'),
     );
 
-    const { result } = renderHook(() => useChat());
+    const { result } = renderHook(() => useChat('test-csrf'));
 
     await act(async () => {
       await result.current.sendMessage('Test');

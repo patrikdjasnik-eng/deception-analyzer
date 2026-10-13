@@ -12,6 +12,7 @@ type NavigationItem = {
 type ShellProps = {
   children: ReactNode;
   onNavigate?: (view: WorkspaceView) => void;
+  onLogout?: () => void;
 };
 
 const primaryNavigation: NavigationItem[] = [
@@ -28,7 +29,7 @@ const secondaryNavigation: NavigationItem[] = [
   { label: 'Settings', icon: '⚙' },
 ];
 
-export function Shell({ children, onNavigate }: ShellProps) {
+export function Shell({ children, onNavigate, onLogout }: ShellProps) {
   const [activeItem, setActiveItem] = useState<WorkspaceView>('Overview');
   const [notifications, setNotifications] = useState(4);
 
@@ -101,6 +102,7 @@ export function Shell({ children, onNavigate }: ShellProps) {
           <div className="status-capsule sc-ok"><i className="sc-dot" /> SYSTEM ONLINE</div>
           <div className="status-capsule sc-warn"><i className="sc-dot pulse" /> {notifications} ALERTS</div>
           <button className="topbar-icon" type="button" aria-label="Notifications" onClick={() => setNotifications(0)}>♢</button>
+          <button className="topbar-icon" type="button" aria-label="Odhlásit" title="Odhlásit" onClick={onLogout}>↪</button>
           <div className="topbar-clock">LOCAL</div>
         </div>
       </header>
