@@ -1,13 +1,19 @@
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { AuthGate } from './components/Auth/AuthGate';
 import { Chat } from './components/Chat/Chat';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { Shell } from './components/Shell/Shell';
-import { Workspace, WorkspaceView } from './components/Workspace/Workspace';
+import { Workspace, type WorkspaceView } from './components/Workspace/Workspace';
 import './styles.css';
 
-function App() {
+type AppProps = {
+  csrfToken: string;
+  onLogout: () => void;
+};
+
+function App({ csrfToken, onLogout }: AppProps) {
   const [activeView, setActiveView] = useState<WorkspaceView>('Overview');
   const [showChat, setShowChat] = useState(false);
 
@@ -17,13 +23,13 @@ function App() {
   };
 
   return (
-    <Shell onNavigate={handleNavigate}>
+    <Shell onNavigate={handleNavigate} onLogout={onLogout}>
       {showChat ? (
         <div className="content-view">
           <button className="view-back" type="button" onClick={() => handleNavigate('Overview')}>
             ← Overview
           </button>
-          <Chat />
+          <Chat csrfToken={csrfToken} />
         </div>
       ) : activeView === 'Overview' ? (
         <div className="content-view">
@@ -47,6 +53,8 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <AuthGate>
+      {(csrfToken, onLogout) => <App csrfToken={csrfToken} onLogout={onLogout} />}
+    </AuthGate>
   </StrictMode>,
 );

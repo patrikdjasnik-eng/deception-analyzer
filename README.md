@@ -96,3 +96,61 @@ Podrobný plán je v [`MVP_PLAN.md`](./MVP_PLAN.md).
 Aktuální základ je frontendový prototype. Deployment, threat feeds, SIEM integrace, API calls, firewall actions a LLM operace jsou zatím reprezentované mock nebo advisory workflow.
 
 Dalším krokem je postupný převod prototypu na skutečnou aplikaci při zachování jeho současného UI.
+
+
+## Lokální spuštění zabezpečeného AI chatu
+
+Vývojová verze používá lokální Ollama endpoint. AI API vyžaduje přihlášení
+správce. Bez nastaveného Argon2id hashe a dostatečně dlouhého session secretu
+přihlášení odmítne požadavky (fail-closed).
+
+Na Windows / PowerShell:
+
+```powershell
+cd backend
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+Copy-Item .env.example .env
+python -c "from argon2 import PasswordHasher; import getpass; print(PasswordHasher().hash(getpass.getpass('Heslo: ')))"
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+Oba vygenerované výstupy vlož do `backend/.env` jako
+`RABBITHOLLOW_ADMIN_PASSWORD_HASH` a `RABBITHOLLOW_SESSION_SECRET`.
+Skutečné hodnoty **nikdy necommituj**.
+
+V druhém terminálu připrav Ollamu a model:
+
+```powershell
+ollama pull qwen2.5-coder:7b
+ollama serve
+```
+
+Pokud Ollama běží na pozadí, není potřeba spouštět druhou instanci.
+
+Následně spusť backend a frontend v samostatných terminálech:
+
+```powershell
+cd backend
+.\.venv\Scripts\Activate.ps1
+uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+```powershell
+cd frontend
+npm install
+npm run dev -- --host 127.0.0.1
+```
+
+Otevři `http://127.0.0.1:5173` a přihlas se vytvořeným heslem.
+Frontend i backend musí používat stejný hostname (`127.0.0.1`
+nebo `localhost`), aby lokální SameSite cookie fungovala.
+
+Alternativní model nastavíš přes `RABBITHOLLOW_LLM_MODEL` v `.env`.
+V této bezpečnostní baseline jsou povolené pouze LLM endpointy na loopback
+rozhraní. RabbitHollow zatím automaticky nespouští Ollamu a neobsahuje
+produkční senzory, databázi incidentů ani multi-user RBAC.
+
+Pro kontrolu změn spusť `pytest -q` z `backend` a
+`npm test && npm run build` z `frontend`.

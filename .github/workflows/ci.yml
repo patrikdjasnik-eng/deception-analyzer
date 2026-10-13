@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev/rabbithollow-**
   pull_request:
     branches:
       - main
@@ -39,6 +40,11 @@ jobs:
             exit 1
           fi
 
+      - name: Python runtime
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Backend testy
         working-directory: backend
         shell: bash
@@ -48,10 +54,16 @@ jobs:
           pip install -r requirements.txt
           PYTHONPATH=. pytest -q
 
-      - name: Frontend testy
+      - name: Node runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Frontend testy a produkční build
         working-directory: frontend
         shell: bash
         run: |
           set -euo pipefail
-          npm install
+          npm install --no-audit --no-fund
           npm test
+          npm run build
