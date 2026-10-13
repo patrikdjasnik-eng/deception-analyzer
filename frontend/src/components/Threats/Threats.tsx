@@ -16,6 +16,7 @@ export function Threats() {
       <section className="panel">
         <div className="panel-head"><div><div className="eyebrow">DETECTION FEED</div><h2>Active threats</h2></div><span className="panel-live"><i className="sys-dot on" /> NO DATA</span></div>
         <div className="event-list">
+          {threats.length === 0 && <p className="empty-telemetry">Žádné připojené detekční zdroje.</p>}
           {threats.map((threat) => <article className="event-row threat-row" key={threat.title}><time>{threat.time}</time><span className={`threat-severity severity-${threat.severity.toLowerCase()}`}>{threat.severity}</span><div className="event-body"><strong>{threat.title}</strong><span>{threat.source} · {threat.status}</span></div></article>)}
         </div>
       </section>
