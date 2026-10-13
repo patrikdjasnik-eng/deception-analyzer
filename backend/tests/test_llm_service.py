@@ -4,6 +4,7 @@ import httpx
 import pytest
 
 from app.services.llm import LlmService
+from app.services.llm_policy import SYSTEM_MESSAGE
 
 
 @pytest.mark.asyncio
@@ -23,6 +24,9 @@ async def test_chat_posila_nastaveny_model() -> None:
     payload = client.post.call_args.kwargs["json"]
     assert payload["model"] == service.model
     assert payload["stream"] is False
+    assert payload["max_tokens"] == service.max_tokens
+    assert payload["messages"][0] == {"role": "system", "content": SYSTEM_MESSAGE}
+    assert payload["messages"][1] == {"role": "user", "content": "test"}
 
 
 @pytest.mark.asyncio
