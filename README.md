@@ -13,6 +13,36 @@ RabbitHollow je security dashboard pro deception operations. Spojuje honeypoty, 
 
 Současná podoba projektu vychází z frontend prototypu `rabbithollow-v3_4.html`. Prototyp obsahuje kompletní UI koncept, navigaci a hlavní workflow, přičemž část dat a operací je zatím simulovaná.
 
+## 🚀 Rychlé spuštění (frontend prototyp)
+
+Aktuálně lze spustit pouze frontendový prototyp. README ani repozitář zatím nedokládají hotový FastAPI backend nebo PostgreSQL službu, proto je tento návod nespouští.
+
+Požadavky: Node.js a npm.
+
+```bash
+git clone https://github.com/patrikdjasnik-eng/deception-analyzer.git
+cd deception-analyzer/frontend
+npm install
+npm run dev
+```
+
+Vite vypíše lokální adresu (standardně `http://localhost:5173`). Otevři ji v prohlížeči.
+
+Kontrola TypeScriptu a produkční build:
+
+```bash
+npm run build
+```
+
+Testy frontendu:
+
+```bash
+npm test
+```
+
+Část dashboardu používá mock/simulační data. Zobrazené honeypoty, eventy ani bezpečnostní operace proto nepovažuj za živou infrastrukturu.
+
+
 ## Platforma
 
 | Modul | Účel |
