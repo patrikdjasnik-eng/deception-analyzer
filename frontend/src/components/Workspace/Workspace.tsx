@@ -19,12 +19,12 @@ const viewContent: Record<WorkspaceView, { eyebrow: string; title: string; descr
 };
 
 const sampleRows: Record<Exclude<WorkspaceView, 'Overview' | 'AI Analyst'>, string[]> = {
-  Threats: ['Suspicious authentication burst', 'Credential enumeration', 'Unusual outbound connection'],
-  Deception: ['SSH decoy · online', 'Web decoy · interaction', 'Database decoy · online'],
-  Network: ['10.0.4.21 → 10.0.7.13', '10.0.2.88 → external', '10.0.7.13 → 10.0.4.21'],
-  Telemetry: ['sensor-07 · heartbeat', 'sensor-03 · heartbeat', 'sensor-12 · heartbeat'],
-  Reports: ['Daily security summary', 'Threat intelligence report', 'Deception activity report'],
-  Settings: ['LLM endpoint', 'Security policy', 'Notification settings'],
+  Threats: [],
+  Deception: [],
+  Network: [],
+  Telemetry: [],
+  Reports: [],
+  Settings: [],
 };
 
 export function Workspace({ view, onOpenChat }: WorkspaceProps) {
@@ -37,10 +37,10 @@ export function Workspace({ view, onOpenChat }: WorkspaceProps) {
       <section className="workspace" aria-label="AI Analyst workspace">
         <div className="page-heading">
           <div><div className="eyebrow">{content.eyebrow}</div><h1>{content.title}</h1><p>{content.description}</p></div>
-          <div className="page-heading-status"><i className="sys-dot on" /> READY</div>
+          <div className="page-heading-status"><i className="sys-dot on" /> NOT VERIFIED</div>
         </div>
         <div className="workspace-card ai-workspace-card">
-          <div><span className="workspace-icon">✦</span><h2>Local AI Analyst</h2><p>Qwen 2.5 Coder is available through the local LLM service.</p></div>
+          <div><span className="workspace-icon">✦</span><h2>Local AI Analyst</h2><p>Verify the configured Ollama model before starting an investigation.</p></div>
           <button className="primary-action" type="button" onClick={onOpenChat}>Open AI Analyst</button>
         </div>
       </section>
@@ -51,11 +51,12 @@ export function Workspace({ view, onOpenChat }: WorkspaceProps) {
     <section className="workspace" aria-label={`${content.title} workspace`}>
       <div className="page-heading">
         <div><div className="eyebrow">{content.eyebrow}</div><h1>{content.title}</h1><p>{content.description}</p></div>
-        <div className="page-heading-status"><i className="sys-dot on" /> LIVE</div>
+        <div className="page-heading-status"><i className="sys-dot on" /> NO TELEMETRY</div>
       </div>
       <section className="panel workspace-table-panel">
-        <div className="panel-head"><div><div className="eyebrow">LIVE DATA</div><h2>{content.title} activity</h2></div><span className="panel-live"><i className="sys-dot on" /> STREAMING</span></div>
+        <div className="panel-head"><div><div className="eyebrow">LIVE DATA</div><h2>{content.title} activity</h2></div><span className="panel-live"><i className="sys-dot on" /> NO DATA</span></div>
         <div className="workspace-rows">
+          {sampleRows[view].length === 0 && <p className="empty-telemetry">Nejsou připojená žádná ověřená data pro tento pohled.</p>}
           {sampleRows[view].map((row, index) => (
             <div className="workspace-row" key={row}>
               <span className={`event-level ${index === 0 && view === 'Threats' ? 'event-critical' : 'event-normal'}`} />
