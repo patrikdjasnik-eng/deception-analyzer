@@ -1,8 +1,10 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field, field_validator
 
 
 class ChatMessage(BaseModel):
-  role: str = Field(pattern="^(user|assistant|system)$")
+  role: Literal["user", "assistant"]
   content: str = Field(min_length=1, max_length=12000)
 
   @field_validator("content")

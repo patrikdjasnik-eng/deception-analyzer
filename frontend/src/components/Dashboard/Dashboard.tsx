@@ -1,16 +1,17 @@
 const metrics = [
-  { label: 'ACTIVE THREATS', value: '04', detail: '2 critical', className: 'metric-danger' },
-  { label: 'DECEPTION NODES', value: '12', detail: 'all healthy', className: 'metric-primary' },
-  { label: 'NETWORK EVENTS', value: '1,284', detail: '+8.4% / 24h', className: 'metric-sky' },
-  { label: 'AI CONFIDENCE', value: '97.2%', detail: 'Qwen 2.5 Coder', className: 'metric-success' },
+  { label: 'ACTIVE THREATS', value: '—', detail: 'Žádné připojené senzory', className: 'metric-danger' },
+  { label: 'DECEPTION NODES', value: '—', detail: 'Nepřipojeno', className: 'metric-primary' },
+  { label: 'NETWORK EVENTS', value: '—', detail: 'Telemetrie není dostupná', className: 'metric-sky' },
+  { label: 'AI STATUS', value: '—', detail: 'Lokální model neověřen', className: 'metric-success' },
 ];
 
-const events = [
-  { time: '09:42:18', type: 'THREAT', title: 'Suspicious authentication burst', source: '10.0.4.21', level: 'critical' },
-  { time: '09:39:07', type: 'DECEPTION', title: 'Honeypot interaction detected', source: '10.0.7.13', level: 'warning' },
-  { time: '09:34:52', type: 'NETWORK', title: 'Outbound connection anomaly', source: '10.0.2.88', level: 'warning' },
-  { time: '09:28:31', type: 'TELEMETRY', title: 'Endpoint heartbeat received', source: 'sensor-07', level: 'normal' },
-];
+const events: Array<{
+  time: string;
+  type: string;
+  title: string;
+  source: string;
+  level: string;
+}> = [];
 
 export function Dashboard() {
   return (
@@ -21,7 +22,7 @@ export function Dashboard() {
           <h1>Overview</h1>
           <p>Deception intelligence and network security status.</p>
         </div>
-        <div className="page-heading-status"><i className="sys-dot on" /> LIVE</div>
+        <div className="page-heading-status"><i className="sys-dot on" /> NO TELEMETRY</div>
       </div>
 
       <div className="metric-grid">
@@ -41,9 +42,10 @@ export function Dashboard() {
               <div className="eyebrow">LIVE FEED</div>
               <h2>Security events</h2>
             </div>
-            <span className="panel-live"><i className="sys-dot on" /> STREAMING</span>
+            <span className="panel-live"><i className="sys-dot on" /> NO DATA</span>
           </div>
           <div className="event-list">
+            {events.length === 0 && <p className="empty-telemetry">Žádná skutečná telemetrie. Nejprve připoj izolovaný honeypot nebo ingest logů.</p>}
             {events.map((event) => (
               <article className="event-row" key={`${event.time}-${event.title}`}>
                 <time>{event.time}</time>
@@ -65,14 +67,14 @@ export function Dashboard() {
             </div>
           </div>
           <div className="health-list">
-            <div className="health-row"><span>Network sensors</span><strong>12 / 12</strong><i className="sys-dot on" /></div>
-            <div className="health-row"><span>Deception nodes</span><strong>12 / 12</strong><i className="sys-dot on" /></div>
-            <div className="health-row"><span>AI analyst</span><strong>READY</strong><i className="sys-dot on" /></div>
+            <div className="health-row"><span>Network sensors</span><strong>NOT CONNECTED</strong><i className="sys-dot on" /></div>
+            <div className="health-row"><span>Deception nodes</span><strong>NOT CONNECTED</strong><i className="sys-dot on" /></div>
+            <div className="health-row"><span>AI analyst</span><strong>NOT VERIFIED</strong><i className="sys-dot on" /></div>
             <div className="health-row"><span>Sandbox</span><strong>READY</strong><i className="sys-dot on" /></div>
           </div>
           <div className="posture-score">
             <span>POSTURE SCORE</span>
-            <strong>94</strong>
+            <strong>—</strong>
             <small>/ 100</small>
           </div>
         </section>

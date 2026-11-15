@@ -6,7 +6,6 @@ from app.schemas.chat import ChatRequest
 
 def test_chat_request_odrizne_okrajove_mezery() -> None:
   request = ChatRequest(messages=[{"role": "user", "content": "  ahoj  "}])
-
   assert request.messages[0].content == "ahoj"
 
 
@@ -18,6 +17,11 @@ def test_chat_request_odmitne_prazdnou_zpravu() -> None:
 def test_chat_request_odmitne_neplatnou_roli() -> None:
   with pytest.raises(ValidationError):
     ChatRequest(messages=[{"role": "developer", "content": "test"}])
+
+
+def test_chat_request_odmitne_system_roli() -> None:
+  with pytest.raises(ValidationError):
+    ChatRequest(messages=[{"role": "system", "content": "test"}])
 
 
 def test_chat_request_odmitne_prilis_dlouhou_zpravu() -> None:

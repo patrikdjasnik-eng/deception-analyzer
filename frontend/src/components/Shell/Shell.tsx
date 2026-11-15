@@ -12,12 +12,13 @@ type NavigationItem = {
 type ShellProps = {
   children: ReactNode;
   onNavigate?: (view: WorkspaceView) => void;
+  onLogout?: () => void;
 };
 
 const primaryNavigation: NavigationItem[] = [
   { label: 'Overview', icon: '⌂' },
-  { label: 'Threats', icon: '△', count: '4', countClass: 'nc-da' },
-  { label: 'Deception', icon: '◈', count: '2', countClass: 'nc-am' },
+  { label: 'Threats', icon: '△',  },
+  { label: 'Deception', icon: '◈',  },
   { label: 'Network', icon: '⌁' },
   { label: 'Telemetry', icon: '◌' },
 ];
@@ -28,9 +29,9 @@ const secondaryNavigation: NavigationItem[] = [
   { label: 'Settings', icon: '⚙' },
 ];
 
-export function Shell({ children, onNavigate }: ShellProps) {
+export function Shell({ children, onNavigate, onLogout }: ShellProps) {
   const [activeItem, setActiveItem] = useState<WorkspaceView>('Overview');
-  const [notifications, setNotifications] = useState(4);
+  const [notifications, setNotifications] = useState(0);
 
   const breadcrumb = useMemo(() => activeItem.toUpperCase(), [activeItem]);
 
@@ -84,8 +85,8 @@ export function Shell({ children, onNavigate }: ShellProps) {
           </div>
         </nav>
         <div className="sidebar-footer">
-          <div className="sys-row"><span className="sys-label">LLM</span><span className="sys-val"><i className="sys-dot on" /> Qwen 2.5</span></div>
-          <div className="sys-row"><span className="sys-label">Sandbox</span><span className="sys-val"><i className="sys-dot on" /> Ready</span></div>
+          <div className="sys-row"><span className="sys-label">LLM</span><span className="sys-val"><i className="sys-dot on" /> NOT VERIFIED</span></div>
+          <div className="sys-row"><span className="sys-label">Sandbox</span><span className="sys-val"><i className="sys-dot on" /> NOT CONFIGURED</span></div>
           <div className="sys-row"><span className="sys-label">Alerts</span><span className="sys-val">{notifications}</span></div>
         </div>
       </aside>
@@ -93,14 +94,15 @@ export function Shell({ children, onNavigate }: ShellProps) {
       <header className="topbar">
         <div className="topbar-breadcrumb"><span>RABBITHOLLOW</span><span className="bc-sep">/</span><span>{breadcrumb}</span></div>
         <div className="alert-ticker" aria-label="Security alerts"><div className="ticker-inner">
-          <span className="ticker-item"><i className="ticker-dot" /> Deception sensor online</span>
-          <span className="ticker-item"><i className="ticker-dot" /> Network telemetry nominal</span>
-          <span className="ticker-item"><i className="ticker-dot" /> AI analyst ready</span>
+          <span className="ticker-item"><i className="ticker-dot" /> No deception sensors connected</span>
+          <span className="ticker-item"><i className="ticker-dot" /> Network telemetry unavailable</span>
+          <span className="ticker-item"><i className="ticker-dot" /> AI runtime not verified</span>
         </div></div>
         <div className="topbar-right">
-          <div className="status-capsule sc-ok"><i className="sc-dot" /> SYSTEM ONLINE</div>
-          <div className="status-capsule sc-warn"><i className="sc-dot pulse" /> {notifications} ALERTS</div>
+          <div className="status-capsule sc-ok"><i className="sc-dot" /> DEMO MODE</div>
+          <div className="status-capsule sc-warn"><i className="sc-dot pulse" /> {notifications} VERIFIED ALERTS</div>
           <button className="topbar-icon" type="button" aria-label="Notifications" onClick={() => setNotifications(0)}>♢</button>
+          <button className="topbar-icon" type="button" aria-label="Odhlásit" title="Odhlásit" onClick={onLogout}>↪</button>
           <div className="topbar-clock">LOCAL</div>
         </div>
       </header>
